@@ -10,7 +10,7 @@ public class FlexibleObject {
 	
 	float stiffness;
 	
-	float secondMomentOfInertia;
+	double secondMomentOfInertia;
 	
 	//constructor
 	public FlexibleObject(float length, float width, float height, float stiffness) {
@@ -19,6 +19,10 @@ public class FlexibleObject {
 		this.height = height;
 		
 		this.stiffness = stiffness;
+		
+		this.secondMomentOfInertia = Formulas.calculateSecondMomentOfInertia(width, height);
 	}
+	
+	
 
 }

@@ -10,16 +10,16 @@ public class Main {
 	}
 
 	public static void testDeflection() {
-		float length = 0.080f;	//meter
-		float width = 0.015f;	//meter
-		float heigth = 0.002f;	//meter
-		float youngsModulus = (float) (3.6f * Math.pow(10, 6));
+		double length = 0.080;	//meter
+		double width = 0.015;	//meter
+		double heigth = 0.002;	//meter
+		double youngsModulus = 3.6 * Math.pow(10, 6);
 		
 		FlexibleObject f = new FlexibleObject(length, width, heigth, youngsModulus);
 		
 		System.out.println(f);
 		
-		for(float x = 0; x <= f.length; x += 0.01) {
+		for(double x = 0; x <= f.length; x += 0.01) {
 			System.out.println("w(" + x + ") = " + Formulas.deflection(f, x));
 		}
 		

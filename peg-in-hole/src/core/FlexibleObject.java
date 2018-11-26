@@ -4,16 +4,16 @@ package core;
  * This class represents our flexible objects
  */
 public class FlexibleObject {
-	public float length;
-	public float width;
-	public float height;
+	public double length;
+	public double width;
+	public double height;
 	
-	public float youngsModulus;				//Young's modulus (a quantity that measures an object or substance's resistance to being deformed elasticall)
+	public double youngsModulus;				//Young's modulus (a quantity that measures an object or substance's resistance to being deformed elasticall)
 	
 	public double secondMomentOfInertia;	//2nd Area Moment (Flaechentraegheitsmoment)
 	
 	//constructor
-	public FlexibleObject(float length, float width, float height, float youngsModulus) {
+	public FlexibleObject(double length, double width, double height, double youngsModulus) {
 		this.length = length;
 		this.width = width;
 		this.height = height;

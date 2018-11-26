@@ -8,7 +8,7 @@ public class FlexibleObject {
 	public float width;
 	public float height;
 	
-	public float youngsModulus;			//Young's modulus (a quantity that measures an object or substance's resistance to being deformed elasticall)
+	public float youngsModulus;				//Young's modulus (a quantity that measures an object or substance's resistance to being deformed elasticall)
 	
 	public double secondMomentOfInertia;	//2nd Area Moment (Flaechentraegheitsmoment)
 	
@@ -32,8 +32,7 @@ public class FlexibleObject {
 				+ "height = " + this.height + "\n"
 				+ "E = " + this.youngsModulus + "\t"
 				+ "I = " + this.secondMomentOfInertia + "\n"
-				+ "----------------------------------------------\n";
-		
+				+ "----------------------------------------------";
 	}
 	
 

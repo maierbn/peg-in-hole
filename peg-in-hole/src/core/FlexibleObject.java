@@ -4,13 +4,13 @@ package core;
  * This class represents our flexible objects
  */
 public class FlexibleObject {
-	float length;
-	float width;
-	float height;
+	public float length;
+	public float width;
+	public float height;
 	
-	float youngsModulus;
+	public float youngsModulus;			//Young's modulus (a quantity that measures an object or substance's resistance to being deformed elasticall)
 	
-	double secondMomentOfInertia;
+	public double secondMomentOfInertia;	//2nd Area Moment (Flaechentraegheitsmoment)
 	
 	//constructor
 	public FlexibleObject(float length, float width, float height, float youngsModulus) {

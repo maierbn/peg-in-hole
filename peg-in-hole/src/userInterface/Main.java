@@ -24,9 +24,9 @@ public class Main {
 		return I;
 		
 	}
-	public float deflection(float wofx) {
+	public float deflection(float x) {
 		
 		
-		return wofx;
+		return x;
 	}
 }

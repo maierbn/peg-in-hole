@@ -10,9 +10,9 @@ public class Main {
 	}
 
 	public static void testDeflection() {
-		float length = 0.2f;
-		float width = 0.05f;
-		float heigth = 0.01f;
+		float length = 0.2f;		//meter
+		float width = 0.05f;		//meter
+		float heigth = 0.01f;		//meter
 		float youngsModulus = (float) (3.6f * Math.pow(10, 6));
 		
 		FlexibleObject f = new FlexibleObject(length, width, heigth, youngsModulus);

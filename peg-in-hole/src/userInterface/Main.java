@@ -17,6 +17,8 @@ public class Main {
 		
 		FlexibleObject f = new FlexibleObject(length, width, heigth, youngsModulus);
 		
+		System.out.println(f);
+		
 		for(float x = 0; x <= f.length; x += 0.01) {
 			System.out.println("w(" + x + ") = " + Formulas.deflection(f, x));
 		}

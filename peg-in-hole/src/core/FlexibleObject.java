@@ -23,6 +23,18 @@ public class FlexibleObject {
 		this.secondMomentOfInertia = Formulas.calculateSecondMomentOfInertia(width, height);
 	}
 	
+	@Override
+	public String toString() {
+		return "----------------------------------------------\n"
+				+ "Flexible Object (@" + Integer.toHexString(hashCode()) + ")\n"
+				+ "lenght = " + this.length + "\t"
+				+ "width = " + this.width + "\t"
+				+ "height = " + this.height + "\n"
+				+ "E = " + this.youngsModulus + "\t"
+				+ "I = " + this.secondMomentOfInertia + "\n"
+				+ "----------------------------------------------\n";
+		
+	}
 	
 
 }

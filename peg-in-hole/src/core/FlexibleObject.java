@@ -8,17 +8,17 @@ public class FlexibleObject {
 	float width;
 	float height;
 	
-	float stiffness;
+	float youngsModulus;
 	
 	double secondMomentOfInertia;
 	
 	//constructor
-	public FlexibleObject(float length, float width, float height, float stiffness) {
+	public FlexibleObject(float length, float width, float height, float youngsModulus) {
 		this.length = length;
 		this.width = width;
 		this.height = height;
 		
-		this.stiffness = stiffness;
+		this.youngsModulus = youngsModulus;
 		
 		this.secondMomentOfInertia = Formulas.calculateSecondMomentOfInertia(width, height);
 	}

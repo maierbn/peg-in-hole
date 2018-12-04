@@ -1,2 +1,29 @@
-# peg-in-hole
-Forschungsprojekt Informatik
+## Forschungsprojekt Informatik - Peg-in-Hole
+### ToDo
+### Source
+* [Paper: Learning Peg-In-Hole actions with flexible objects](https://www.researchgate.net/publication/265945436_Learning_Peg-In-Hole_actions_with_flexible_objects)
+* [Sparse Grid Library](http://sgpp.sparsegrids.org/index.html) - [Manual](http://sgpp.sparsegrids.org/manual.html) - [Java Examples](http://sgpp.sparsegrids.org/examples_java.html)
+
+### Phase 1 - Online
++ [ ] Vorbereitung
+	+ [x] JSGPP
++ [ ] Deformation
+	+ [x] Modellierung
+	+ [ ] Berechnung
++ [ ] Objektbeschreibung
++ [ ] Trajektorie
++ [ ] Simulationsvorbereitung
+	+ [ ] Funktion
+	+ [ ] Kollision
+	+ [ ] Abstand
++ [ ] Simulation
+	+ [ ] Kernelgenerierung
+
+### Phase 2 - Offline
++ [ ] Realtime-Suche
++ [ ] Validierung
++ [ ] Auswerung
+
+###  Phase 3 - Ergebnisse
++ [ ] Ausarbeitung
++ [ ] Poster

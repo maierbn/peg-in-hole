@@ -6,21 +6,23 @@ package core;
 public class FlexibleObject {
 	public double length;
 	public double width;
-	public double height;
+	public double thickness;
 	
+	public double density;
 	public double youngsModulus;				//Young's modulus (a quantity that measures an object or substance's resistance to being deformed elasticall)
 	
 	public double secondMomentOfInertia;	//2nd Area Moment (Flaechentraegheitsmoment)
 	
 	//constructor
-	public FlexibleObject(double length, double width, double height, double youngsModulus) {
+	public FlexibleObject(double length, double width, double thickness, double density, double youngsModulus) {
 		this.length = length;
 		this.width = width;
-		this.height = height;
+		this.thickness = thickness;
 		
+		this.density = density;
 		this.youngsModulus = youngsModulus;
 		
-		this.secondMomentOfInertia = Formulas.calculateSecondMomentOfInertia(width, height);
+		this.secondMomentOfInertia = Formulas.calculateSecondMomentOfInertia(width, thickness);
 	}
 	
 	@Override
@@ -29,7 +31,7 @@ public class FlexibleObject {
 				+ "Flexible Object (@" + Integer.toHexString(hashCode()) + ")\n"
 				+ "lenght = " + this.length + "\t"
 				+ "width = " + this.width + "\t"
-				+ "height = " + this.height + "\n"
+				+ "height = " + this.thickness + "\n"
 				+ "E = " + this.youngsModulus + "\t"
 				+ "I = " + this.secondMomentOfInertia + "\n"
 				+ "----------------------------------------------";

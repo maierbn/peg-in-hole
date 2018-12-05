@@ -1,6 +1,6 @@
 ## Forschungsprojekt Informatik - Peg-in-Hole
 ### ToDo
-
++ [ ] Berechnung der ABlenkung stimmt noch nicht mit Beispiel überein
 ----
 ### Roadmap
 #### Phase 1 - Offline

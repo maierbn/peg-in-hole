@@ -25,6 +25,7 @@ public class FlexibleObject {
 		this.secondMomentOfInertia = Formulas.calculateSecondMomentOfInertia(width, thickness);
 	}
 	
+		
 	@Override
 	public String toString() {
 		return "----------------------------------------------\n"

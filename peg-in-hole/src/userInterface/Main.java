@@ -1,7 +1,7 @@
 package userInterface;
 
 import core.FlexibleObject;
-import core.Formulas;
+import core.Simulation;
 
 public class Main {
 
@@ -16,13 +16,15 @@ public class Main {
 		double density = 1150;
 		double youngsModulus = 3.6E6;
 		
+		int simulationSteps = 3;
+		
 		FlexibleObject f = new FlexibleObject(length, width, heigth, density, youngsModulus);
 		
 		System.out.println(f);
 		
-		for(double x = 0; x <= f.length; x += 0.01) {
-			System.out.println("w(" + x + ") = " + Formulas.deflection(f, x));
-		}
+		Simulation sim = new Simulation(f, simulationSteps);
+		
+		sim.start();
 		
 	}
 }

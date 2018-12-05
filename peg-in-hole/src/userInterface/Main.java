@@ -24,6 +24,5 @@ public class Main {
 			System.out.println("w(" + x + ") = " + Formulas.deflection(f, x));
 		}
 		
-		System.out.println("w_max = " + Formulas.deflectionMax(f));
 	}
 }

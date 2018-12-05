@@ -1,6 +1,7 @@
 package userInterface;
 
 import core.FlexibleObject;
+import core.Log;
 import core.Simulation;
 
 public class Main {
@@ -19,8 +20,6 @@ public class Main {
 		int simulationSteps = 3;
 		
 		FlexibleObject f = new FlexibleObject(length, width, heigth, density, youngsModulus);
-		
-		System.out.println(f);
 		
 		Simulation sim = new Simulation(f, simulationSteps);
 		

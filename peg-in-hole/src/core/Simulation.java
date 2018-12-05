@@ -10,10 +10,10 @@ public class Simulation {
 	}
 	
 	public void start() {
+		Log.print("Starting Simulation..");
 		for(double x = 0; x <= f.length; x += (f.length / steps)) {
 			double deflection = Formulas.deflection(f, x);
-			System.out.println(deflection);
-			System.out.println(x);
+			Log.print("Deflection(x=" + x * 1000 + "mm) = " + deflection * 1000 + "mm");
 		}
 	}
 

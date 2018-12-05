@@ -23,6 +23,8 @@ public class FlexibleObject {
 		this.youngsModulus = youngsModulus;
 		
 		this.secondMomentOfInertia = Formulas.calculateSecondMomentOfInertia(width, thickness);
+		
+		Log.print("Created Flexible Object:\n" + this);
 	}
 	
 		

@@ -8,7 +8,7 @@
 	+ [x] JSGPP
 + [ ] Deformation
 	+ [x] Modellierung
-	+ [ ] Berechnung
+	+ [x] Berechnung
 + [ ] Objektbeschreibung
 + [ ] Trajektorie
 + [ ] Simulationsvorbereitung

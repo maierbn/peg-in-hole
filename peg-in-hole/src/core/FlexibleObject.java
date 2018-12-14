@@ -9,11 +9,11 @@ public class FlexibleObject {
 	public double thickness;
 	
 	public double density;
-	public double youngsModulus;				//Young's modulus (a quantity that measures an object or substance's resistance to being deformed elasticall)
+	public double youngsModulus;			//Young's modulus (a quantity that measures an object or substance's resistance to being deformed elasticall)
 	
 	public double secondMomentOfInertia;	//2nd Area Moment (Flaechentraegheitsmoment)
 	
-	//constructor
+	
 	public FlexibleObject(double length, double width, double thickness, double density, double youngsModulus) {
 		this.length = length;
 		this.width = width;
@@ -24,7 +24,7 @@ public class FlexibleObject {
 		
 		this.secondMomentOfInertia = Formulas.calculateSecondMomentOfInertia(width, thickness);
 		
-//		Log.print("Created Flexible Object:\n" + this);
+		Log.print("Created Flexible Object:\n" + this);
 	}
 	
 		
@@ -39,6 +39,4 @@ public class FlexibleObject {
 				+ "I = " + this.secondMomentOfInertia + "\n"
 				+ "----------------------------------------------";
 	}
-	
-
 }

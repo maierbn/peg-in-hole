@@ -1,33 +1,35 @@
 package core;
 
+import java.util.Arrays;
+
 public class Simulation {
 	public FlexibleObject flexObj;
 	public int deflectionRes;
-	public double[] deflectionValArray;
+	public double[] deflectionValues;
 
 	public Simulation(FlexibleObject f, int steps) {
 		this.flexObj = f;
 		this.deflectionRes = steps;
 	}
 
-	public void deflectionValues(FlexibleObject object, int steps) {
-
-		deflectionValArray = new double[steps+1];
+	public void calcDeflectionValues(FlexibleObject object, int steps) {
+		Log.print("Calculatin deflection values..");
+		
+		deflectionValues = new double[steps+1];
 
 		int i = 0;
 		for (double x = 0; x <= object.length; x += (object.length / steps)) {
-			deflectionValArray[i] = Formulas.deflection(object, x);
+			deflectionValues[i] = Formulas.deflection(object, x);
 			i++;
 		}
+		
+		Log.print("\nDeflection value array:\n"
+				+ Arrays.toString(deflectionValues));
 	}
 
 	public void start() {
-//		Log.print("Starting Simulation..");
-		System.out.println("Calculatin deflection values...");
-		deflectionValues(this.flexObj, this.deflectionRes);
-		System.out.println("Done");
+		Log.print("Starting Simulation..");
 		
-		
-//		Log.print("Deflection(x=" + x * 1000 + "mm) = " + deflection * 1000 + "mm");
+		calcDeflectionValues(this.flexObj, this.deflectionRes);
 	}
 }

@@ -24,7 +24,7 @@ public class FlexibleObject {
 		
 		this.secondMomentOfInertia = Formulas.calculateSecondMomentOfInertia(width, thickness);
 		
-		Log.print("Created Flexible Object:\n" + this);
+		Log.print("Created flexible object:\n" + this);
 	}
 	
 		

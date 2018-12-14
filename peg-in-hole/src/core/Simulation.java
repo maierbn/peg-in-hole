@@ -23,12 +23,12 @@ public class Simulation {
 			i++;
 		}
 		
-		Log.print("\nDeflection value array:\n"
+		Log.print("Deflection value array:\n\t"
 				+ Arrays.toString(deflectionValues));
 	}
 
 	public void start() {
-		Log.print("Starting Simulation..");
+		Log.print("Starting simulation..");
 		
 		calcDeflectionValues(this.flexObj, this.deflectionRes);
 	}

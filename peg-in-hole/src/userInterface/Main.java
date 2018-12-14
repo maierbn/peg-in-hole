@@ -21,7 +21,7 @@ public class Main {
 		double youngsModulus = 3.6E6;
 
 		/**
-		 * on how many points we want a deflection to be calculated
+		 * for how many x-values do we want to calculate the deflection
 		 * 
 		 * also reflects the amount of rigid blocks for collision detection (this - 1)
 		 * as well as amount of joints (this - 1)
@@ -34,27 +34,7 @@ public class Main {
 
 		sim.start();
 		
-		
-		//TODO move this code to a designated GUI-class
-		
-		
-		// generate x axis values through some esoteric streaming bullshit
-		//double[] xData = IntStream.rangeClosed(0, simDeflectionRes).mapToDouble((x) -> (double) x).toArray();
-		
-		// improvement: x axis should be length of object, not amount of steps
-		double[] xData = IntStream
-				.rangeClosed(0, simDeflectionRes)
-				.mapToDouble(x -> x*length/simDeflectionRes)
-				.toArray();
-		
-		// get the deflection values from simulation as graph y data
-		double[] yData = sim.deflectionValues;
-		// cause it doesn't bend upwards *lennyface*
-		double[] yDataInverted = DoubleStream.of(yData).map(x -> -x).toArray();
-
-		// create chart and show it
-		XYChart chart = QuickChart.getChart("Defelction", "x in m", "y in m", "y(x)", xData, yDataInverted);
-		new SwingWrapper<XYChart>(chart).displayChart();
+		deflectionDiagram.draw(sim);
 
 	}
 }

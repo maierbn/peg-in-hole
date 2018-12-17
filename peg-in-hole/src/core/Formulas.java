@@ -69,7 +69,7 @@ public class Formulas {
 	 * @return the angle between two vectors
 	 */
 	public static double angleOfTwoVectors(double[] a, double[] b) {
-		return Math.acos(dotProduct(a,b)/vectorLength(a)*vectorLength(b));
+		return Math.acos(dotProduct(a,b)/(vectorLength(a)*vectorLength(b)));
 	}
 	
 }

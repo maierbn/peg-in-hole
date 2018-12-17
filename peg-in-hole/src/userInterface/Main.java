@@ -1,11 +1,6 @@
 package userInterface;
 
-import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
-import org.knowm.xchart.*;
 import core.FlexibleObject;
-//import core.Log;
-import core.Simulation;
 
 public class Main {
 
@@ -26,15 +21,13 @@ public class Main {
 		 * also reflects the amount of rigid blocks for collision detection (this - 1)
 		 * as well as amount of joints (this - 1)
 		 */
-		int simDeflectionRes = 3;
+		int deflectionRes = 3000;
 
-		FlexibleObject flexObj = new FlexibleObject(length, width, heigth, density, youngsModulus);
-
-		Simulation sim = new Simulation(flexObj, simDeflectionRes);
-
-		sim.start();
+		FlexibleObject flex = new FlexibleObject(length, width, heigth, density, youngsModulus);
 		
-		deflectionDiagram.draw(sim);
+		flex.calcDeflectionValues(deflectionRes);
+		
+		deflectionDiagram.draw(flex);
 
 	}
 }

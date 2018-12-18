@@ -1,9 +1,6 @@
 package userInterface;
 
-import com.sun.javafx.geom.Vec2d;
-
 import core.FlexibleObject;
-import core.Vector2D;
 
 public class Main {
 
@@ -35,20 +32,16 @@ public class Main {
 		double[] a = {1,2};
 		double[] b = {2,3};
 		
-		Vector2D aa = new Vector2D(1, 2);
-		Vector2D bb = new Vector2D(2, 3);
+		double veclength = core.Formulas.vectorLength(a);
 		
-		//double veclength = core.Formulas.vectorLength(a);
-		
-		double veclength = Vector2D.vectorLength(aa);
 		System.out.println(veclength);
 		
-		//double result = core.Formulas.dotProduct(a, b);
-		double result = Vector2D.dotProduct(aa, bb);
+		double result = core.Formulas.dotProduct(a, b);
+		
 		System.out.println(result);
 		
-		//double angle = core.Formulas.angleOfTwoVectors(a, b);
-		double angle = Vector2D.angleOfTwoVectors(aa, bb);
+		double angle = core.Formulas.angleOfTwoVectors(a, b);
+		
 		System.out.println(angle);
 	}
 }

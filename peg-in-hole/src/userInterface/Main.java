@@ -28,20 +28,6 @@ public class Main {
 		flex.calcDeflectionValues(deflectionRes);
 		
 		deflectionDiagram.draw(flex);
-		
-		double[] a = {1,2};
-		double[] b = {2,3};
-		
-		double veclength = core.Formulas.vectorLength(a);
-		
-		System.out.println(veclength);
-		
-		double result = core.Formulas.dotProduct(a, b);
-		
-		System.out.println(result);
-		
-		double angle = core.Formulas.angleOfTwoVectors(a, b);
-		
-		System.out.println(angle);
+
 	}
 }

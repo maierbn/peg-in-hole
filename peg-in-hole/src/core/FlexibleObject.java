@@ -18,7 +18,8 @@ public class FlexibleObject {
 	
 	//
 	public int deflectionRes;
-	public double[] deflectionValues;
+	public double[] deflectionYValues;
+	public double[] deflectionXValues;
 	
 	
 	public FlexibleObject(double length, double width, double thickness, double density, double youngsModulus) {
@@ -39,16 +40,32 @@ public class FlexibleObject {
 		
 		Log.print("Calculatin deflection values..");
 		
-		deflectionValues = new double[deflectionRes+1];
+		deflectionYValues = new double[deflectionRes+1];
+		deflectionXValues = new double[deflectionRes+1];
 
+		double stepSize = this.length/this.deflectionRes;
+		
+		// creates delta values for deflection
 		int i = 0;
-		for (double x = 0; x <= this.length; x += (this.length / deflectionRes)) {
-			deflectionValues[i] = Formulas.deflection(this, x);
+		for (double x = 0; x <= this.length; x += stepSize) {
+			deflectionYValues[i] = Formulas.deflection(this, x);
 			i++;
 		}
 		
-		Log.print("Deflection value array:\n\t"
-				+ Arrays.toString(deflectionValues));
+		// generate kartesian x values, since naive approach IS WRONG
+		deflectionXValues[0] = 0;
+		
+		for (int j = 1; j < deflectionYValues.length; j++) {
+			deflectionXValues[j] = Math.sqrt(Math.pow(stepSize, 2) - Math.pow(deflectionYValues[j]-deflectionYValues[j-1], 2));
+			deflectionXValues[j] += deflectionXValues[j-1];
+
+		}
+		
+		Log.print("Deflection values X:\n\t"
+				+ Arrays.toString(deflectionXValues) 
+				+ "Deflection values Y:\n\t"
+				+ Arrays.toString(deflectionYValues)
+				);
 	}
 		
 	@Override

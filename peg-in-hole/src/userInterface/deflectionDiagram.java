@@ -10,15 +10,24 @@ import org.knowm.xchart.style.markers.SeriesMarkers;
 
 import core.FlexibleObject;
 import core.Log;
+import javafx.geometry.Point2D;
 
 public class deflectionDiagram {
 	public static void draw(FlexibleObject flex) {
 		Log.print("Drawing deflection-diagram..");
 		
+		
 		// corrected x axis values
-		double[] xData = flex.deflectionXValues;
+		double[] xData = new double[flex.deflectionRes];
+		for (int i = 0; i < xData.length; i++) {
+			xData[i] = flex.deflectionPoints[i].getX();
+		}
+		
 		// get the deflection values from the flexibleObject as graph y data
-		double[] yData = flex.deflectionYValues;
+		double[] yData = new double[flex.deflectionRes];
+		for (int i = 0; i < yData.length; i++) {
+			yData[i] = flex.deflectionPoints[i].getY();
+		}
 		// cause it doesn't bend upwards *lennyface*
 		double[] yDataInverted = DoubleStream.of(yData).map(x -> -x).toArray();
 

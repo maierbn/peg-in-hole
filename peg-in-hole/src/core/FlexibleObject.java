@@ -1,7 +1,6 @@
 package core;
 
 import java.util.Arrays;
-
 import javafx.geometry.Point2D;
 
 /*
@@ -17,11 +16,7 @@ public class FlexibleObject {
 	
 	public double secondMomentOfInertia;	//2nd Area Moment (Flaechentraegheitsmoment)
 	
-	
-	//
 	public int deflectionRes;
-//	public double[] deflectionYValues;
-//	public double[] deflectionXValues;
 	public Point2D[] deflectionPoints; 
 	
 	
@@ -40,17 +35,19 @@ public class FlexibleObject {
 	
 	public void calcDeflectionValues(int deflectionRes) {
 		this.deflectionRes = deflectionRes;
+		deflectionPoints = new Point2D[deflectionRes+1];
+		double stepSize = this.length/this.deflectionRes;
 		
 		Log.print("Calculatin deflection values..");
 		
-//		deflectionYValues = new double[deflectionRes+1];
-//		deflectionXValues = new double[deflectionRes+1];
-		
-		deflectionPoints = new Point2D[deflectionRes+1];
-
-		double stepSize = this.length/this.deflectionRes;
-		
-		// creates delta values for deflection
+		/**
+		 * creates delta values for deflection
+		 * 
+		 * "(i equals 0)? then return 0 : else do other stuff"
+		 * handles edge case at the beginning, inline
+		 * 
+		 * sqrt is expensive - maybe there's a better way?
+		 */
 		int i = 0;
 		for (double x = 0; x <= this.length; x += stepSize) {
 			
@@ -58,7 +55,8 @@ public class FlexibleObject {
 			double yCoord = Formulas.deflection(this, x);
 			double yDelta = yCoord-yPrev;
 			
-			double cSq = Math.pow(stepSize, 2);
+			// pythagoras: sqrt(bSquared=cSquared-aSquared)
+			double cSq = (i==0)?0:Math.pow(stepSize, 2);
 			double aSq = Math.pow(yDelta, 2);
 			
 			double xPrev = (i==0)?0:deflectionPoints[i-1].getX();
@@ -69,25 +67,18 @@ public class FlexibleObject {
 			i++;
 		}
 		
-		// displace the curve so end is at (0,0)
+		/**
+		 * displace the curve so end is at (0,0)
+		 * by getting the last point and moving all points
+		 * by its negative vector
+		 */
 		Point2D displacement = new Point2D(-deflectionPoints[deflectionRes].getX(),-deflectionPoints[deflectionRes].getY());
-		
+
 		for (int j = 0; j < deflectionPoints.length; j++) {
 			deflectionPoints[j] = deflectionPoints[j].add(displacement);
 		}
 		
-		// generate kartesian x values, since naive approach IS WRONG
-//		deflectionXValues[0] = 0;
-//		
-//		for (int j = 1; j < deflectionYValues.length; j++) {
-//			deflectionXValues[j] = Math.sqrt( - );
-//			deflectionXValues[j] += deflectionXValues[j-1];
-//
-//		}
-		
-		Log.print("Deflection values X:\n\t"
-				+ Arrays.toString(deflectionPoints) 
-				+ "Deflection values Y:\n\t"
+		Log.print("Deflection Points:\n\t"
 				+ Arrays.toString(deflectionPoints)
 				);
 	}

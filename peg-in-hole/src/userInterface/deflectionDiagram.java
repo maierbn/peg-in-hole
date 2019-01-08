@@ -7,10 +7,8 @@ import org.knowm.xchart.XYChartBuilder;
 import org.knowm.xchart.XYSeries;
 import org.knowm.xchart.XYSeries.XYSeriesRenderStyle;
 import org.knowm.xchart.style.markers.SeriesMarkers;
-
 import core.FlexibleObject;
 import core.Log;
-import javafx.geometry.Point2D;
 
 public class deflectionDiagram {
 	public static void draw(FlexibleObject flex) {
@@ -18,13 +16,13 @@ public class deflectionDiagram {
 		
 		
 		// corrected x axis values
-		double[] xData = new double[flex.deflectionRes];
+		double[] xData = new double[flex.deflectionRes+1];
 		for (int i = 0; i < xData.length; i++) {
 			xData[i] = flex.deflectionPoints[i].getX();
 		}
 		
 		// get the deflection values from the flexibleObject as graph y data
-		double[] yData = new double[flex.deflectionRes];
+		double[] yData = new double[flex.deflectionRes+1];
 		for (int i = 0; i < yData.length; i++) {
 			yData[i] = flex.deflectionPoints[i].getY();
 		}

@@ -1,5 +1,7 @@
 package core;
 
+import javafx.geometry.Point3D;
+
 /*
  * This class contains static formulas used by other classes
  */
@@ -31,5 +33,48 @@ public class Formulas {
 		//double angleP0 = Math.atan(-(1d/6d) * q * Math.pow(L, 3));
 
 		return (q * x * x * (6 * L * L - 4 * L * x + x * x)) / (24 * E * I) + additional;
+	}
+	
+	private static double bernstein(int i, double t) {
+		// TODO write bernstein polynomial solution for n=2 hardcoded. 
+		// use pascal triangle LUT for efficient binomial coefficients
+		return 0;
+	}
+	/**
+	 * calculate big B term, whatever that represents. some sort of weight
+	 * 
+	 * @param p0	staring point
+	 * @param cp	control point
+	 * @param p1	end point aka (0,0,0)
+	 * @param t		position on the trajectory
+	 * @return		B(t)=b_0,2(t)*P0 + b_1,2(t)*2*cp + b_2,2(t)*P1 / b_0,2(t) + b_1,2(t)*2 + b_2,2(t)
+	 */
+	private static Point3D bigB(Point3D p0, Point3D cp, Point3D p1, double t) {
+		
+		// TODO write full formula
+		return p0.multiply(bernstein(0,t));
+	}
+	
+	/**
+	 * calculates the x-y-angle point on position t of the arm trajectory
+	 * 
+	 * @param p0 	staring point
+	 * @param cp 	control point
+	 * @param p1 	end point aka (0,0,0)
+	 * @param t		position on the trajectory
+	 * @return		P(t) = P0 + B(t) * (P1 - P0)
+	 */
+	public static Point3D trajectory(Point3D p0, Point3D cp, Point3D p1, double t) {
+		Point3D B = bigB(p0, cp, p1, t);
+		Point3D P0_neg = new Point3D(-p0.getX(), -p0.getY(), -p0.getZ());
+		Point3D P1minusP0 = p1.add(P0_neg);
+		
+		// what is B*(P1-P0) supposed to do? crossproduct? dot product? coeff by coeff?
+		double multCoeffX = B.getX()*P1minusP0.getX();
+		double multCoeffY = B.getY()*P1minusP0.getY();
+		double multCoeffZ = B.getZ()*P1minusP0.getZ();
+		Point3D coeffMultB = new Point3D(multCoeffX, multCoeffY, multCoeffZ);
+		
+		return p0.add(coeffMultB);
 	}
 }

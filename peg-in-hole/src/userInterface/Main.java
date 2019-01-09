@@ -1,6 +1,9 @@
 package userInterface;
 
+
 import core.FlexibleObject;
+import javafx.geometry.*;
+import javafx.scene.shape.QuadCurve;
 
 public class Main {
 
@@ -27,6 +30,20 @@ public class Main {
 		
 		flex.calcDeflectionValues(deflectionRes);
 		
+		/**
+		 * trajectory - first iteration, to be outsourced into another class
+		 * 
+		 * Coefficients are x-coord, y-coord, angle to x-axis
+		 */
+		Point3D p1 = new Point3D(0, 0, 0);
+		
+		double deflectionXmax = flex.deflectionPoints[deflectionRes].getX();
+		double deflectionYmax = flex.deflectionPoints[deflectionRes].getY();
+		Point2D deflectionFirst = flex.deflectionPoints[1];
+		double angle0 = deflectionFirst.angle(1, 0);
+
+		Point3D p0 = new Point3D(-deflectionXmax,-deflectionYmax,angle0);
+			
 		deflectionDiagram.draw(flex);
 
 	}

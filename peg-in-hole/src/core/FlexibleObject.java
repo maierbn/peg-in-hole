@@ -67,6 +67,12 @@ public class FlexibleObject {
 			i++;
 		}
 		
+		Log.print("Deflection Points:\n\t"
+				+ Arrays.toString(deflectionPoints)
+				);
+	}
+
+	public void displaceToZero() {
 		/**
 		 * displace the curve so end is at (0,0)
 		 * by getting the last point and moving all points
@@ -77,12 +83,8 @@ public class FlexibleObject {
 		for (int j = 0; j < deflectionPoints.length; j++) {
 			deflectionPoints[j] = deflectionPoints[j].add(displacement);
 		}
-		
-		Log.print("Deflection Points:\n\t"
-				+ Arrays.toString(deflectionPoints)
-				);
 	}
-		
+
 	@Override
 	public String toString() {
 		return "----------------------------------------------\n"

@@ -1,9 +1,16 @@
 package userInterface;
 
 
+import org.knowm.xchart.SwingWrapper;
+import org.knowm.xchart.XYChart;
+import org.knowm.xchart.XYChartBuilder;
+import org.knowm.xchart.XYSeries;
+import org.knowm.xchart.XYSeries.XYSeriesRenderStyle;
+import org.knowm.xchart.style.markers.SeriesMarkers;
+
 import core.FlexibleObject;
+import core.Formulas;
 import javafx.geometry.*;
-import javafx.scene.shape.QuadCurve;
 
 public class Main {
 
@@ -24,27 +31,44 @@ public class Main {
 		 * also reflects the amount of rigid blocks for collision detection (this - 1)
 		 * as well as amount of joints (this - 1)
 		 */
-		int deflectionRes = 3000;
+		int deflectionRes = 5;
 
 		FlexibleObject flex = new FlexibleObject(length, width, heigth, density, youngsModulus);
 		
 		flex.calcDeflectionValues(deflectionRes);
+		flex.displaceToZero();
+		deflectionDiagram.draw(flex);
 		
-		/**
-		 * trajectory - first iteration, to be outsourced into another class
-		 * 
-		 * Coefficients are x-coord, y-coord, angle to x-axis
-		 */
+		//TODO
+		testTrajectory(flex);
+	}
+	
+	public static void testTrajectory(FlexibleObject flex) {
+		
+		Point3D[] trajPoints = new Point3D[flex.deflectionRes+1];
+		double stepSize = 1/(double)flex.deflectionRes;
+		
+		// control points
+		Point3D cp = new Point3D(-0.2, 1, 0.16);
+		
 		Point3D p1 = new Point3D(0, 0, 0);
 		
-		double deflectionXmax = flex.deflectionPoints[deflectionRes].getX();
-		double deflectionYmax = flex.deflectionPoints[deflectionRes].getY();
 		Point2D deflectionFirst = flex.deflectionPoints[1];
-		double angle0 = deflectionFirst.angle(1, 0);
+		double angle0 = 180-deflectionFirst.angle(1, 0);
+		// y is negative since gravitation generally does not bend stuff upwards
+		Point3D p0 = new Point3D(flex.deflectionPoints[0].getX(),-flex.deflectionPoints[0].getY(),angle0);
 
-		Point3D p0 = new Point3D(-deflectionXmax,-deflectionYmax,angle0);
-			
-		deflectionDiagram.draw(flex);
-
+		// t between 0, 1
+		int i = 0;
+		for (double t = 0; t <= 1; t += stepSize)  {
+			trajPoints[i]=Formulas.trajectory(p0, cp, p1, t);
+			System.out.println("Point "+i);
+			System.out.println(trajPoints[i].getX());
+			System.out.println(trajPoints[i].getY());
+			System.out.println(trajPoints[i].getZ());
+			i++;
+		}
+		
+		TrajectoryDiagram.draw(flex.deflectionRes, trajPoints);
 	}
 }

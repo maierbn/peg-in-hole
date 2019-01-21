@@ -38,8 +38,10 @@ public class deflectionDiagram {
 		
 		XYSeries series = chart.addSeries("y(x)", xData, yDataInverted);
 		series.setMarker(SeriesMarkers.CIRCLE);
-				
-		chart.getStyler().setXAxisMax(flex.length);
+		
+		// if displaced to zero, use - length & 0
+		chart.getStyler().setXAxisMin(-flex.length);
+		chart.getStyler().setXAxisMax(0d);
 		chart.getStyler().setYAxisMax(flex.length);
 		
 		new SwingWrapper<XYChart>(chart).displayChart();

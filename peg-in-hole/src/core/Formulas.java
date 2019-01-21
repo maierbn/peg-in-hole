@@ -59,58 +59,79 @@ public class Formulas {
 	 * solves the bernstein polynomial for hardcoded degree n=2
 	 * 
 	 * @param i	range 0..2
-	 * @param t	position on curve
+	 * @param t	position on curve, 0..1
 	 * @return	(n over i) * (1-t)^n-i * t^i
 	 */
 	private static double bernstein(int i, double t) {
-		// TODO write bernstein polynomial solution for n=2 hardcoded. 
-		// use pascal triangle LUT for efficient binomial coefficients
-		// n=2 here, always
-		// i= 0..2
 		return (fac(2)/(fac(i)*fac(2-i)))*Math.pow(1-t, 2-i)*Math.pow(t, i);
 	}
 	
 	/**
-	 * calculate big B term, whatever that represents. some sort of weight
+	 * calculate big B term
 	 * 
-	 * also, how the **** shall we divide a 3d vector by another 3d vector?
-	 * guess component-wise, again?
-	 * 
-	 * nope, divisor is a scalar - but still undefined?
-	 * just Point3D.multiply(1/divisor) it is then
-	 * 
+	 * all operations are component-wise
 	 * multiply() and add() are already component-wise ops, should be fine
 	 * 
 	 * @param p0	staring point
 	 * @param cp	control point
 	 * @param p1	end point aka (0,0,0)
-	 * @param t		position on the trajectory
+	 * @param t		position on the trajectory, 0..1
 	 * @return		B(t)=b_0,2(t)*P0 + b_1,2(t)*2*cp + b_2,2(t)*P1 / b_0,2(t) + b_1,2(t)*2 + b_2,2(t)
 	 */
 	private static Point3D bigB(Point3D p0, Point3D cp, Point3D p1, double t) {
 		
+//		DEBUG
+//		// zähler
+//		Point3D t1 = p0.multiply(bernstein(0, t));
+//		Point3D t2 = cp.multiply(bernstein(1, t));
+//		Point3D t2w = t2.multiply(2);
+//		Point3D t3 = p1.multiply(bernstein(2, t));
+//		
+//		Point3D t1t2 = t1.add(t2w);
+//		Point3D t1t2t3 = t1t2.add(t3);
+//		
+//		//nenner
+//		
+//		double n1 = bernstein(0, t);
+//		double n2w = 2* bernstein(1, t);
+//		double n3 = bernstein(2, t);
+//		
+//		double n1n2n3 = n1+n2w+n3;
+//		
+//		double resultX = t1t2t3.getX()/n1n2n3;
+//		double resultY = t1t2t3.getY()/n1n2n3;
+//		double resultZ = t1t2t3.getZ()/n1n2n3;
+		
+		// verified to be identical to the DEBUG, step-by-step version
 		Point3D numerator = p0.multiply(bernstein(0,t)).add(cp.multiply(2*bernstein(1,t))).add(p1.multiply(bernstein(2, t)));
 		double divisor = bernstein(0,t)+2*bernstein(1,t)+bernstein(2,t);
 		
-		return numerator.multiply(1/divisor);
+		Point3D supposedValue = numerator.multiply(1/divisor);
+		
+//		DEBUG
+//		return new Point3D(resultX, resultY, resultZ);
+		return supposedValue;
 	}
 	
 	/**
 	 * calculates the x-y-angle point on position t of the arm trajectory
 	 * 
+	 * all operations are component-wise
+	 * 
+	 * P1-P0 could be simplified to (-P0), since P1 is always zero
+	 * however, for the sake of consistency and debugging, the original form is preferred
+	 * 
 	 * @param p0 	staring point
 	 * @param cp 	control point
 	 * @param p1 	end point aka (0,0,0)
-	 * @param t		position on the trajectory
+	 * @param t		position on the trajectory, 0..1
 	 * @return		P(t) = P0 + B(t) * (P1 - P0)
 	 */
 	public static Point3D trajectory(Point3D p0, Point3D cp, Point3D p1, double t) {
+		
 		Point3D B = bigB(p0, cp, p1, t);
-		//Point3D P0_neg = new Point3D(-p0.getX(), -p0.getY(), -p0.getZ());
 		Point3D P1minusP0 = p1.subtract(p0);
 		
-		// what is B(t)*(P1-P0) supposed to do? crossproduct? dot product? coeff by coeff?
-		// if the latter, then:
 		double multCoeffX = B.getX()*P1minusP0.getX();
 		double multCoeffY = B.getY()*P1minusP0.getY();
 		double multCoeffZ = B.getZ()*P1minusP0.getZ();

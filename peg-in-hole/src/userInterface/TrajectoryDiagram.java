@@ -12,8 +12,8 @@ import javafx.geometry.Point3D;
 public class TrajectoryDiagram {
 
 	public static void draw(int resolution, Point3D[] trajPoints) {
-		double[] xDataProj = new double[resolution];
-		double[] yDataProj = new double[resolution];
+		double[] xDataProj = new double[resolution+1];
+		double[] yDataProj = new double[resolution+1];
 		
 
 		for (int j = 0; j < xDataProj.length; j++) {

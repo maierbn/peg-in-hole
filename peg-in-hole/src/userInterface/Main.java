@@ -1,13 +1,5 @@
 package userInterface;
 
-
-import org.knowm.xchart.SwingWrapper;
-import org.knowm.xchart.XYChart;
-import org.knowm.xchart.XYChartBuilder;
-import org.knowm.xchart.XYSeries;
-import org.knowm.xchart.XYSeries.XYSeriesRenderStyle;
-import org.knowm.xchart.style.markers.SeriesMarkers;
-
 import core.FlexibleObject;
 import core.Formulas;
 import javafx.geometry.*;
@@ -49,7 +41,7 @@ public class Main {
 		double stepSize = 1/(double)flex.deflectionRes;
 		
 		// control points
-		Point3D cp = new Point3D(-0.2, 1, 0.16);
+		Point3D cp = new Point3D(-0.035, 0.01, 0.16);
 		
 		Point3D p1 = new Point3D(0, 0, 0);
 		
@@ -61,7 +53,7 @@ public class Main {
 		// t between 0, 1
 		int i = 0;
 		for (double t = 0; t <= 1; t += stepSize)  {
-			trajPoints[i]=Formulas.trajectory(p0, cp, p1, t);
+			trajPoints[i]=Formulas.bigB(p0, cp, p1, t);
 			System.out.println("Point "+i);
 			System.out.println(trajPoints[i].getX());
 			System.out.println(trajPoints[i].getY());

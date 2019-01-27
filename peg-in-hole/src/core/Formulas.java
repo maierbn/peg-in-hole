@@ -78,7 +78,7 @@ public class Formulas {
 	 * @param t		position on the trajectory, 0..1
 	 * @return		B(t)=b_0,2(t)*P0 + b_1,2(t)*2*cp + b_2,2(t)*P1 / b_0,2(t) + b_1,2(t)*2 + b_2,2(t)
 	 */
-	private static Point3D bigB(Point3D p0, Point3D cp, Point3D p1, double t) {
+	public static Point3D bigB(Point3D p0, Point3D cp, Point3D p1, double t) {
 		
 //		DEBUG
 //		// zähler

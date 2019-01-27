@@ -1,21 +1,24 @@
 ## Forschungsprojekt Informatik - Peg-in-Hole
 ### ToDo
-+ [ ] Berechnung der ABlenkung stimmt noch nicht mit Beispiel überein
++ [x] Berechnung der ABlenkung stimmt noch nicht mit Beispiel überein
 ----
 ### Roadmap
 #### Phase 1 - Offline
-+ [ ] Vorbereitung
++ [x] Vorbereitung
 	+ [x] JSGPP
 + [ ] Deformation
 	+ [x] Modellierung
-	+ [x] Berechnung
-+ [ ] Objektbeschreibung
-+ [ ] Trajektorie
-+ [ ] Simulationsvorbereitung
-	+ [ ] Funktion
-	+ [ ] Kollision
-	+ [ ] Abstand
+	+ [x] Berechnung der Augangsdeformation
+	+ [x] Visualisierung der Augangsdeformation
+	+ [ ] Berechnung der Deformation bei gegebenem Winkel in P0
++ [x] Trajektorie
+	+ [x] Formel fuer die Trajektorie bei gegebenem cp
+	+ [x] Visualisierung einer Trajektorie
 + [ ] Simulation
+	+ [ ] Erstelle array mit gut gewaehlten cp's
+	+ [ ] Simulation der trajektorien mit live-berechnung der Deformation
+	+ [ ] Kollisionserkennung und Minimalabstandsmessung
+	+ [ ] Speichern der cp's mit deren Minimalabstand
 	+ [ ] Kernelgenerierung
 
 #### Phase 2 - Online

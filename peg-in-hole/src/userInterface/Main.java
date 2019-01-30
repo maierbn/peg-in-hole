@@ -1,5 +1,6 @@
 package userInterface;
 
+import core.Constants;
 import core.FlexibleObject;
 import core.Formulas;
 import javafx.geometry.*;
@@ -45,8 +46,10 @@ public class Main {
 		
 		Point3D p1 = new Point3D(0, 0, 0);
 		
-		Point2D deflectionFirst = flex.deflectionPoints[1];
-		double angle0 = 180-deflectionFirst.angle(1, 0);
+		Point2D vectorP0to = flex.deflectionPoints[1].subtract(flex.deflectionPoints[0]);
+		double angle0 = vectorP0to.angle(1d, 0d);
+//		double q = flex.width * flex.thickness * flex.density * Constants.gravitationalAcceleration;
+//		double angle0 = Math.atan((5/(double)6) * q * Math.pow(flex.length,3));
 		// y is negative since gravitation generally does not bend stuff upwards
 		Point3D p0 = new Point3D(flex.deflectionPoints[0].getX(),-flex.deflectionPoints[0].getY(),angle0);
 

@@ -36,8 +36,11 @@ public class TrajectoryDiagram {
 		XYSeries series = chart.addSeries("P(t)", xDataProj, yDataProj);
 		series.setMarker(SeriesMarkers.CIRCLE);
 			
-//		chart.getStyler().setXAxisMin(0d);
-//		chart.getStyler().setXAxisMax(1d);
+//		chart.getStyler().setXAxisMin(-0.04d);
+//		chart.getStyler().setXAxisMax(0d);
+//		chart.getStyler().setYAxisMax(0.04d);
+		
+		chart.getStyler().setLegendVisible(false);
 		
 		new SwingWrapper<XYChart>(chart).displayChart();
 	}

@@ -61,7 +61,6 @@ public class Formulas {
 		double stepSize = f.length / deflectionRes;
 		double x = 0;
 		for (int i = 0; i <= deflectionRes; i++) {
-			System.out.println(x);
 			double yPrev = (i == 0) ? 0 : deflectionPoints[i - 1].getY();
 			double yCoord = Formulas.deflectionYP0(f, x);
 			double yDelta = yCoord - yPrev;

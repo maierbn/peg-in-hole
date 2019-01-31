@@ -1,6 +1,7 @@
 package core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
@@ -38,14 +39,15 @@ public class Simulation {
 		Point3D p0 = new Point3D(deflectionP0[0].getX(), -deflectionP0[0].getY(), angleP0);
 		Point3D p1 = new Point3D(0, 0, 0);
 
-		int i = 0;
-		double stepSize = 1 / (double) trajectoryRes;
+		double stepSize = 1d / trajectoryRes;
+		double t = 0;
 		// t between 0, 1
-		for (double t = 0; t <= 1; t += stepSize) {
+		for (int i = 0; i <= trajectoryRes; i++) {
 			trajectory[i] = Formulas.bigB(p0, cp, p1, t);
-			i++;
+			t += stepSize;
 		}
-		//Log.print("Trajectory Points:\n\t" + Arrays.toString(trajectory));
+		
+		Log.print("Trajectory Points:\n\t" + Arrays.toString(trajectory));
 	}
 
 	public void drawTrajectory() {

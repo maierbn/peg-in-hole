@@ -1,17 +1,11 @@
 package userInterface;
 
-import core.Constants;
 import core.FlexibleObject;
-import core.Formulas;
-import javafx.geometry.*;
+import core.Simulation;
+import javafx.geometry.Point3D;
 
 public class Main {
-
 	public static void main(String[] args) {
-		testDeflection();
-	}
-
-	public static void testDeflection() {
 		double length = 0.040; // meter
 		double width = 0.015; // meter
 		double heigth = 0.002; // meter
@@ -24,46 +18,19 @@ public class Main {
 		 * also reflects the amount of rigid blocks for collision detection (this - 1)
 		 * as well as amount of joints (this - 1)
 		 */
-		int deflectionRes = 5;
+		int deflectionRes = 10;
+		int trajectoryRes = 5;
 
-		FlexibleObject flex = new FlexibleObject(length, width, heigth, density, youngsModulus);
-		
-		flex.calcDeflectionValues(deflectionRes);
-		flex.displaceToZero();
-		deflectionDiagram.draw(flex);
-		
-		//TODO
-		testTrajectory(flex);
-	}
-	
-	public static void testTrajectory(FlexibleObject flex) {
-		
-		Point3D[] trajPoints = new Point3D[flex.deflectionRes+1];
-		double stepSize = 1/(double)flex.deflectionRes;
-		
-		// control points
+		FlexibleObject f = new FlexibleObject(length, width, heigth, density, youngsModulus, deflectionRes);
+		f.drawDeflectionP0();
+
 		Point3D cp = new Point3D(-0.035, 0.01, 0.16);
+		Simulation testSim = new Simulation(f, cp, trajectoryRes);
 		
-		Point3D p1 = new Point3D(0, 0, 0);
-		
-		Point2D vectorP0to = flex.deflectionPoints[1].subtract(flex.deflectionPoints[0]);
-		double angle0 = vectorP0to.angle(1d, 0d);
-//		double q = flex.width * flex.thickness * flex.density * Constants.gravitationalAcceleration;
-//		double angle0 = Math.atan((5/(double)6) * q * Math.pow(flex.length,3));
-		// y is negative since gravitation generally does not bend stuff upwards
-		Point3D p0 = new Point3D(flex.deflectionPoints[0].getX(),-flex.deflectionPoints[0].getY(),angle0);
+		testSim.calcTrajectory();
+		testSim.drawTrajectory();
 
-		// t between 0, 1
-		int i = 0;
-		for (double t = 0; t <= 1; t += stepSize)  {
-			trajPoints[i]=Formulas.bigB(p0, cp, p1, t);
-			System.out.println("Point "+i);
-			System.out.println(trajPoints[i].getX());
-			System.out.println(trajPoints[i].getY());
-			System.out.println(trajPoints[i].getZ());
-			i++;
-		}
-		
-		TrajectoryDiagram.draw(flex.deflectionRes, trajPoints);
+		testSim.calcDeflectionsWithTrajectory();
+		testSim.calcSmallestDistanceToHole();
 	}
 }

@@ -34,6 +34,12 @@ public class Simulation {
 		// x-axis and the vector between the first two points of the initial deflection
 		Point2D vectorP0toPnext = deflectionP0[1].subtract(deflectionP0[0]);
 		double angleP0 = vectorP0toPnext.angle(1d, 0d);
+		
+		/*System.out.println("angle vector =\t" + angleP0);
+		double q = f.width * f.thickness * f.density * Constants.gravitationalAcceleration;
+		System.out.println("q = " + q);
+		angleP0 = Math.atan(q);
+		System.out.println("angle formula =\t" + Math.toDegrees(angleP0));*/
 
 		// p0-y is negative since gravitation generally does not bend stuff upwards
 		Point3D p0 = new Point3D(deflectionP0[0].getX(), -deflectionP0[0].getY(), angleP0);
@@ -47,7 +53,7 @@ public class Simulation {
 			t += stepSize;
 		}
 		
-		Log.print("Trajectory Points:\n\t" + Arrays.toString(trajectory));
+		//Log.print("Trajectory Points:\n\t" + Arrays.toString(trajectory));
 	}
 
 	public void drawTrajectory() {

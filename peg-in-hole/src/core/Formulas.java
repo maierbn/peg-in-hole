@@ -47,8 +47,8 @@ public class Formulas {
 	public static Point2D[] deflectionsP0(FlexibleObject f) {
 		int deflectionRes = f.deflectionRes;
 		Point2D[] deflectionPoints = new Point2D[deflectionRes + 1];
-		
-		//Log.print("Calculatin deflection values..");
+
+		// Log.print("Calculatin deflection values..");
 
 		/**
 		 * creates delta values for deflection
@@ -75,7 +75,7 @@ public class Formulas {
 			deflectionPoints[i] = new Point2D(xCoord, yCoord);
 			x += stepSize;
 		}
-		//Log.print("Deflection Points:\n\t" + Arrays.toString(deflectionPoints));
+		// Log.print("Deflection Points:\n\t" + Arrays.toString(deflectionPoints));
 
 		/**
 		 * displace the curve so end is at (0,0) by getting the last point and moving
@@ -90,16 +90,57 @@ public class Formulas {
 
 		return deflectionPoints;
 	}
-	
+
 	/**
 	 * calculates the deflection-Points with a given trajectoryPoint (x,y,angle)
+	 * 
 	 * @param f
 	 * @param trajectoryPoint
 	 * @return
 	 */
 	public static Point2D[] deflectionsPi(FlexibleObject f, Point3D trajectoryPoint) {
-		//TODO
-		return null;
+		//TODO maybe this method does not work. first we have to correct deflectionYPi()
+		Point2D[] deflection = new Point2D[f.deflectionRes + 1];
+
+		double stepSize = f.length / f.deflectionRes;
+		double x = 0;
+		for (int i = 0; i <= f.deflectionRes; i++) {
+			double yPrev = (i == 0) ? 0 : deflection[i - 1].getY();
+			double yCoord = Formulas.deflectionYPi(f, trajectoryPoint.getZ(), x);
+			double yDelta = yCoord - yPrev;
+
+			// pythagoras: sqrt(bSquared=cSquared-aSquared)
+			double cSq = (i == 0) ? 0 : Math.pow(stepSize, 2);
+			double aSq = Math.pow(yDelta, 2);
+
+			double xPrev = (i == 0) ? 0 : deflection[i - 1].getX();
+			double xCoord = Math.sqrt(cSq - aSq) + xPrev;
+
+			deflection[i] = new Point2D(xCoord, yCoord);
+			x += stepSize;
+		}
+
+		//shift the deflectionPoints to trajectory (X,Y)
+		Point2D displacement = new Point2D(trajectoryPoint.getX(), trajectoryPoint.getY());
+		for (int j = 0; j < deflection.length; j++) {
+			deflection[j] = deflection[j].add(displacement);
+		}
+
+		return deflection;
+	}
+
+	/**
+	 * calculate a deflectionYValue with a given angle at the left side of the flexObj
+	 * @param f
+	 * @param angle
+	 * @param x
+	 * @return
+	 */
+	private static double deflectionYPi(FlexibleObject f, double angle, double x) {
+		// TODO WRONG FORMULA!!
+		double E = f.youngsModulus;
+		double I = f.secondMomentOfInertia;
+		return Math.toRadians(angle) * x / (E * I);
 	}
 
 	/**

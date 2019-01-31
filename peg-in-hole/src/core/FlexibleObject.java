@@ -40,7 +40,7 @@ public class FlexibleObject {
 	}
 	
 	public void drawDeflectionP0() {
-		DeflectionDiagram.draw(this);
+		DeflectionDiagram.draw(this, deflectionP0);
 	}
 	
 	@Override

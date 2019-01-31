@@ -31,6 +31,10 @@ public class Main {
 		testSim.drawTrajectory();
 
 		testSim.calcDeflectionsWithTrajectory();
+		
+		//DeflectionDiagram.draw(f, testSim.deflections.get(1));
+		//DeflectionDiagram.draw(f, testSim.deflections.get(testSim.deflections.size() - 1));
+		
 		testSim.calcSmallestDistanceToHole();
 	}
 }

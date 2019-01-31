@@ -18,8 +18,8 @@ public class Main {
 		 * also reflects the amount of rigid blocks for collision detection (this - 1)
 		 * as well as amount of joints (this - 1)
 		 */
-		int deflectionRes = 10;
-		int trajectoryRes = 5;
+		int deflectionRes = 9;
+		int trajectoryRes = 10;
 
 		FlexibleObject f = new FlexibleObject(length, width, heigth, density, youngsModulus, deflectionRes);
 		f.drawDeflectionP0();

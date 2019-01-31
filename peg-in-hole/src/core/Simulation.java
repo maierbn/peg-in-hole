@@ -27,7 +27,7 @@ public class Simulation {
 	}
 
 	public void calcTrajectory() {
-		Point3D[] trajectory = new Point3D[deflectionRes + 1];
+		trajectory = new Point3D[trajectoryRes + 1];
 		Point2D[] deflectionP0 = deflections.get(0);
 		// the angle in P0 is getting approximated by calculating the angle between the
 		// x-axis and the vector between the first two points of the initial deflection
@@ -39,16 +39,17 @@ public class Simulation {
 		Point3D p1 = new Point3D(0, 0, 0);
 
 		int i = 0;
-		double stepSize = 1 / (double) deflectionRes;
+		double stepSize = 1 / (double) trajectoryRes;
 		// t between 0, 1
 		for (double t = 0; t <= 1; t += stepSize) {
 			trajectory[i] = Formulas.bigB(p0, cp, p1, t);
 			i++;
 		}
+		//Log.print("Trajectory Points:\n\t" + Arrays.toString(trajectory));
 	}
 
 	public void drawTrajectory() {
-		TrajectoryDiagram.draw(deflectionRes, trajectory);
+		TrajectoryDiagram.draw(trajectoryRes, trajectory);
 	}
 
 	public void calcDeflectionsWithTrajectory() {

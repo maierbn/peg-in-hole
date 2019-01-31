@@ -1,7 +1,5 @@
 package core;
 
-import java.util.Arrays;
-
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 
@@ -78,7 +76,7 @@ public class Formulas {
 			deflectionPoints[i] = new Point2D(xCoord, yCoord);
 			x += stepSize;
 		}
-		Log.print("Deflection Points:\n\t" + Arrays.toString(deflectionPoints));
+		//Log.print("Deflection Points:\n\t" + Arrays.toString(deflectionPoints));
 
 		/**
 		 * displace the curve so end is at (0,0) by getting the last point and moving

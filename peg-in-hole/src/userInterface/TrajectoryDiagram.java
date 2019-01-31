@@ -11,21 +11,16 @@ import javafx.geometry.Point3D;
 
 public class TrajectoryDiagram {
 
-	public static void draw(int resolution, Point3D[] trajPoints) {
+	public static void draw(int resolution, Point3D[] trajectory) {
 		double[] xDataProj = new double[resolution+1];
 		double[] yDataProj = new double[resolution+1];
 		
 
-		for (int j = 0; j < xDataProj.length; j++) {
-			xDataProj[j] = trajPoints[j].getX();
+		for (int i = 0; i < xDataProj.length; i++) {
+			xDataProj[i] = trajectory[i].getX();
+			yDataProj[i] = trajectory[i].getY();
 		}
-		
 
-		for (int j = 0; j < yDataProj.length; j++) {
-			yDataProj[j] = trajPoints[j].getY();
-		}
-		
-		
 //		// create chart and show it
 		XYChart chart = new XYChartBuilder().width(600).height(400).title("Trajectory").xAxisTitle("t").yAxisTitle("y").build();
 	

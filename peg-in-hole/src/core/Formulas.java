@@ -49,8 +49,7 @@ public class Formulas {
 	public static Point2D[] deflectionsP0(FlexibleObject f) {
 		int deflectionRes = f.deflectionRes;
 		Point2D[] deflectionPoints = new Point2D[deflectionRes + 1];
-		double stepSize = f.length / deflectionRes;
-
+		
 		//Log.print("Calculatin deflection values..");
 
 		/**
@@ -59,10 +58,11 @@ public class Formulas {
 		 * "(i equals 0)? then return 0 : else do other stuff" handles edge case at the
 		 * beginning, inline
 		 * 
-		 * sqrt is expensive - maybe there's a better way?
+		 * TODO sqrt is expensive - maybe there's a better way?
 		 */
-		int i = 0;
-		for (double x = 0; x <= f.length; x += stepSize) {
+		double stepSize = f.length / deflectionRes;
+		double x = 0;
+		for (int i = 0; i <= deflectionRes; i++) {
 			System.out.println(x);
 			double yPrev = (i == 0) ? 0 : deflectionPoints[i - 1].getY();
 			double yCoord = Formulas.deflectionYP0(f, x);
@@ -76,8 +76,7 @@ public class Formulas {
 			double xCoord = Math.sqrt(cSq - aSq) + xPrev;
 
 			deflectionPoints[i] = new Point2D(xCoord, yCoord);
-
-			i++;
+			x += stepSize;
 		}
 		Log.print("Deflection Points:\n\t" + Arrays.toString(deflectionPoints));
 

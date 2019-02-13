@@ -138,9 +138,14 @@ public class Formulas {
 	 */
 	private static double deflectionYPi(FlexibleObject f, double angle, double x) {
 		// TODO WRONG FORMULA!!
+		System.out.println(angle);
 		double E = f.youngsModulus;
 		double I = f.secondMomentOfInertia;
-		return Math.toRadians(angle) * x / (E * I);
+		double q = f.width * f.thickness * f.density * Constants.gravitationalAcceleration;
+		double L = f.length;
+		double fraction = (q * x * x * (6 * L * L - 4 * L * x + x * x)) / (24 * E * I);
+		return fraction + Math.tan(angle) * x / E*I;
+		//return Math.toRadians(angle) * x / (E * I);
 	}
 
 	/**

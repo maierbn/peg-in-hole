@@ -6,6 +6,8 @@ import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYChartBuilder;
 import org.knowm.xchart.XYSeries;
 import org.knowm.xchart.XYSeries.XYSeriesRenderStyle;
+import org.knowm.xchart.style.AxesChartStyler;
+import org.knowm.xchart.style.Styler.LegendPosition;
 import org.knowm.xchart.style.markers.SeriesMarkers;
 import core.FlexibleObject;
 import core.Log;
@@ -14,7 +16,6 @@ import javafx.geometry.Point2D;
 public class DeflectionDiagram {
 	public static void draw(FlexibleObject f, Point2D[] deflection) {
 		Log.print("Drawing deflection-diagram..");
-		
 		
 		// corrected x axis values
 		double[] xData = new double[f.deflectionRes+1];
@@ -30,33 +31,43 @@ public class DeflectionDiagram {
 		// cause it doesn't bend upwards *lennyface*
 		double[] yDataInverted = DoubleStream.of(yData).map(x -> -x).toArray();
 
-		// create chart and show it
-		XYChart chart = new XYChartBuilder().width(1200).height(1100).title("Deflection").xAxisTitle("X in m").yAxisTitle("Y in m").build();
+		/**
+		 * width-height proportions of the window are chosen as workaround for 1:1 axis scaling
+		 * change with caution
+		 */
+		XYChart chart = new XYChartBuilder()
+				.width(1200)
+				.height(1150)
+				.title("Deflection")
+				.xAxisTitle("x in m, real world")
+				.yAxisTitle("x in m, real world")
+				.build();
+		XYSeries series = chart.addSeries("Deflection of flexible Object, w(x)", xData, yDataInverted);
 		
-		chart.getStyler().setDefaultSeriesRenderStyle(XYSeriesRenderStyle.Line);
-		chart.getStyler().setChartTitleVisible(false);
-		chart.getStyler().setMarkerSize(8);
-		
-		XYSeries series = chart.addSeries("y(x)", xData, yDataInverted);
-		series.setMarker(SeriesMarkers.CIRCLE);
-		
-		// if displaced to zero, use - length & 0
-//		chart.getStyler().setChartPadding(100);
-//		chart.getStyler().setPlotContentSize(0.2);
-		
+		((AxesChartStyler) chart.getStyler()
+				.setDefaultSeriesRenderStyle(XYSeriesRenderStyle.Line)
+				.setChartTitleVisible(false)
+//				.setToolTipsEnabled(true)	// comment this one out to remove labels
+				.setToolTipsAlwaysVisible(true)
+				.setLegendVisible(true)
+				.setLegendPosition(LegendPosition.InsideNE))
+				.setMarkerSize(8);
+				
 		if (xData[1] < 0) {
-			chart.getStyler().setXAxisMin(-f.length);
-			chart.getStyler().setXAxisMax(0d);
-			chart.getStyler().setYAxisMin(-f.length/2);
-			chart.getStyler().setYAxisMax(f.length/2);
+			chart.getStyler()
+				.setXAxisMin(-f.length)
+				.setXAxisMax(0d)
+				.setYAxisMin(-f.length/2)
+				.setYAxisMax(f.length/2);
 		} else {
-			chart.getStyler().setXAxisMin(0d);
-			chart.getStyler().setXAxisMax(f.length);
-			chart.getStyler().setYAxisMin(-f.length/2);
-			chart.getStyler().setYAxisMax(f.length/2);
+			chart.getStyler()
+				.setXAxisMin(0d)
+				.setXAxisMax(f.length)
+				.setYAxisMin(-f.length/2)
+				.setYAxisMax(f.length/2);
 		}
 			
-		chart.getStyler().setLegendVisible(false);
+		series.setMarker(SeriesMarkers.CIRCLE);
 		
 		new SwingWrapper<XYChart>(chart).displayChart();
 	}

@@ -2,6 +2,6 @@
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="src/xchart/xchart-3.5.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/kamik/Documents/GitHub/peg-in-hole/peg-in-hole/src/xchart/xchart-3.5.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -277,6 +277,77 @@ All the styling options can be found in one of two possible places: 1) the Chart
  
 ![](https://raw.githubusercontent.com/knowm/XChart/develop/etc/XChart_Series_Customization.png)
  
+
+### Customizing Axis Ticks & Axis Labels
+
+XChart automatically creates axis ticks and axis labels. 
+
+Default axis placement can be altered with `chart.getStyler().setXAxisTickMarkSpacingHint(spacingHint);`. 
+
+Default axis label patterns can be altered with one of:
+- `chart.getStyler().setDatePattern(datePattern)` 
+- `chart.getStyler().setXAxisDecimalPattern(pattern);` 
+- `chart.getStyler().setYAxisDecimalPattern(pattern);`
+
+
+You can also create custom axis placements and axis labels. Create a map containing x -> label mappings:
+- x : value where the tick will be drawn (this value is in xData space, not in pixel space). For category charts x is index of the category (0 means first category).
+- label: Tick label. If it is `null`, tick will be generated with a `" "` label.
+
+```java
+      XYChart chart = new AreaChart01().getChart();
+      Map<Double, Object> xMarkMap = new TreeMap<Double, Object>();
+      xMarkMap.put(0.0, "zero");
+      xMarkMap.put(3.5, "3.5");
+      xMarkMap.put(5.0, " ");
+      xMarkMap.put(9.0, "nine");
+
+      Map<Double, Object> yMarkMap = new TreeMap<Double, Object>();
+      yMarkMap.put(1.0, "max c");
+      yMarkMap.put(6.0, "max b");
+      yMarkMap.put(9.0, "max a");
+
+      chart.setXAxisLabelOverrideMap(xMarkMap);
+      chart.setYAxisLabelOverrideMap(yMarkMap);
+```
+
+For category charts another way to create custom axis places is using category names in first series:
+```java
+      CategoryChart chart = new BarChart09().getChart();
+      Map<Object, Object> xMarkMap = new TreeMap<Object, Object>();
+      xMarkMap.put("A", "-A-");
+      xMarkMap.put("D", "+D+");
+
+      chart.setCustomCategoryLabels(xMarkMap);
+```
+### Multiple Axes
+
+XChart has multiple y axes feature. Y offset is calculated according to the y axis the series configured. Max `y` value in this axis is calculated according to the series on this axis only. 
+To set the y group: 
+
+```java
+    series.setYAxisGroup(axisGroup);   
+```
+
+To manually change max/min of axis group: 
+
+```java
+    ((AxesChartStyler) chart.getStyler()).setYAxisMax(axisGroup, 200.0);
+```
+
+Axis can be drawn on the left (default) or on the right of the chart: 
+
+```java
+    chart.getStyler().setYAxisGroupPosition(axisGroup, Styler.YAxisPosition.Right);
+```
+
+To set the Y axes titles:
+
+```java
+    chart.setYAxisGroupTitle(0, "A");
+    chart.setYAxisGroupTitle(1, "B");
+```
+
 ## Chart Themes
 
 XChart ships with three different themes: Default `XChart`, `GGPlot2` and `Matlab`. Using a different theme is as simple as setting the Chart's theme with the `theme` method of the `ChartBuilder`.
@@ -305,7 +376,7 @@ Add the XChart library as a dependency to your pom.xml file:
     <dependency>
         <groupId>org.knowm.xchart</groupId>
         <artifactId>xchart</artifactId>
-        <version>3.5.2</version>
+        <version>3.5.4</version>
     </dependency>
 ```
 
@@ -321,7 +392,7 @@ For snapshots, add the following to your pom.xml file:
     <dependency>
       <groupId>org.knowm.xchart</groupId>
       <artifactId>xchart</artifactId>
-      <version>3.5.3-SNAPSHOT</version>
+      <version>3.5.5-SNAPSHOT</version>
     </dependency>
 ```
 
@@ -332,7 +403,7 @@ Snapshots can be manually downloaded from Sonatype: [https://oss.sonatype.org/co
 To use XChart with the Scala Build Tool (SBT) add the following to your build.sbt
 
 ```scala
-libraryDependencies += "org.knowm.xchart" % "xchart" % "3.5.2" exclude("de.erichseifert.vectorgraphics2d", "VectorGraphics2D") withSources()
+libraryDependencies += "org.knowm.xchart" % "xchart" % "3.5.4" exclude("de.erichseifert.vectorgraphics2d", "VectorGraphics2D") withSources()
 ```
 
 ## Building
@@ -361,7 +432,7 @@ In the plugins section in IntelliJ search for `google-java-format` and install t
 ## Running Demo
 
     cd /path/to/xchart-demo/jar/
-    java -cp xchart-demo-3.5.2.jar:xchart-3.5.2.jar org.knowm.xchart.demo.XChartDemo
+    java -cp xchart-demo-3.5.4.jar:xchart-3.5.4.jar org.knowm.xchart.demo.XChartDemo
 
 ![](https://raw.githubusercontent.com/knowm/XChart/develop/etc/XChart_Demo.png)
 
@@ -371,6 +442,6 @@ Please report any bugs or submit feature requests to [XChart's Github issue trac
 
 ## Continuous Integration
 
-[![Build Status](https://travis-ci.org/timmolter/XChart.png?branch=develop)](https://travis-ci.org/timmolter/XChart.png)  
-[Build History](https://travis-ci.org/timmolter/XChart/builds)  
+[![Build Status](https://travis-ci.org/knowm/XChart.png?branch=develop)](https://travis-ci.org/timmolter/XChart.png)  
+[Build History](https://travis-ci.org/knowm/XChart/builds)  
 

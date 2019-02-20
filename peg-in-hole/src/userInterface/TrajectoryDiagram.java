@@ -25,10 +25,12 @@ public class TrajectoryDiagram {
 		double[] xDataProj = new double[resolution+1];
 		double[] yDataProj = new double[resolution+1];
 		Point2D[] zDataProj = new Point2D[resolution+1];
+		String[] zDataAngle = new String[resolution+1];
 	
 		for (int i = 0; i < xDataProj.length; i++) {
 			xDataProj[i] = trajectory[i].getX();
 			yDataProj[i] = trajectory[i].getY();
+			zDataAngle[i] = String.format("%.2f", trajectory[i].getZ());
 			/**
 			 * get the current point at (xDataProj[i],yDataProj[i])
 			 * conjure up a very small vector, e.g. (0.002d,0d)
@@ -41,9 +43,13 @@ public class TrajectoryDiagram {
 			zDataProj[i] = new Point2D(xDataProj[i],yDataProj[i]).add(new Rotate(trajectory[i].getZ(),0,0).transform(0.002d,0d));
 		}
 
+		/**
+		 * width-height proportions of the window are chosen as workaround for 1:1 axis scaling
+		 * change with caution
+		 */
 		XYChart chart = new XYChartBuilder()
 				.width(1200)
-				.height(1100)
+				.height(1150)
 				.title("Trajectory")
 				.xAxisTitle("x in m, real world")
 				.yAxisTitle("y in m, real world")
@@ -56,12 +62,15 @@ public class TrajectoryDiagram {
 		 * for x and y separately
 		 */
 		for (int i = 0; i < zDataProj.length; i++) {
-			((MarkerSeries) chart.addSeries("Rotation at given p"+i+"int",new double[] {xDataProj[i],zDataProj[i].getX()},new double[] {yDataProj[i],zDataProj[i].getY()})
+			((MarkerSeries) chart.addSeries(
+					"Rotation at given p"+i+"int",
+					new double[] {xDataProj[i],zDataProj[i].getX()},
+					new double[] {yDataProj[i],zDataProj[i].getY()})
 				.setShowInLegend((i==0)? true : false))
 				.setMarker(SeriesMarkers.NONE)
 				.setLineColor(Color.RED)
 				.setLineStyle(SeriesLines.SOLID)
-//				.setLabel(""+trajectory[i].getZ())
+				.setToolTips(new String[] {null,null})
 				;		
 		}
 
@@ -69,17 +78,20 @@ public class TrajectoryDiagram {
 		((AxesChartStyler) chart.getStyler()
 			.setDefaultSeriesRenderStyle(XYSeriesRenderStyle.Line)
 			.setChartTitleVisible(false)
-			.setToolTipsEnabled(true)
-			.setLegendVisible(true).setLegendPosition(LegendPosition.InsideNE))
+			.setToolTipsEnabled(true)	// comment this one out to remove labels
+			.setToolTipsAlwaysVisible(true)
+			.setLegendVisible(true)
+			.setLegendPosition(LegendPosition.InsideNE))
 			.setMarkerSize(8)
-							
+			// axis settings
 			.setXAxisMin(xDataProj[0])
 			.setXAxisMax(0d)
 			.setYAxisMin(xDataProj[0]/2)
 			.setYAxisMax(-xDataProj[0]/2)
 			;
 		
-		series.setMarker(SeriesMarkers.CIRCLE);
+		series.setMarker(SeriesMarkers.CIRCLE)
+			.setToolTips(zDataAngle);
 		
 		new SwingWrapper<XYChart>(chart).displayChart();
 	}

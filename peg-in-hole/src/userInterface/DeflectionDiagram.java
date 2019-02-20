@@ -31,7 +31,7 @@ public class DeflectionDiagram {
 		double[] yDataInverted = DoubleStream.of(yData).map(x -> -x).toArray();
 
 		// create chart and show it
-		XYChart chart = new XYChartBuilder().width(600).height(400).title("Deflection").xAxisTitle("X in m").yAxisTitle("Y in m").build();
+		XYChart chart = new XYChartBuilder().width(1200).height(1100).title("Deflection").xAxisTitle("X in m").yAxisTitle("Y in m").build();
 		
 		chart.getStyler().setDefaultSeriesRenderStyle(XYSeriesRenderStyle.Line);
 		chart.getStyler().setChartTitleVisible(false);
@@ -41,10 +41,21 @@ public class DeflectionDiagram {
 		series.setMarker(SeriesMarkers.CIRCLE);
 		
 		// if displaced to zero, use - length & 0
-		//chart.getStyler().setXAxisMin(-f.length);
-		//chart.getStyler().setXAxisMax(0d);
-		//chart.getStyler().setYAxisMax(f.length);
+//		chart.getStyler().setChartPadding(100);
+//		chart.getStyler().setPlotContentSize(0.2);
 		
+		if (xData[1] < 0) {
+			chart.getStyler().setXAxisMin(-f.length);
+			chart.getStyler().setXAxisMax(0d);
+			chart.getStyler().setYAxisMin(-f.length/2);
+			chart.getStyler().setYAxisMax(f.length/2);
+		} else {
+			chart.getStyler().setXAxisMin(0d);
+			chart.getStyler().setXAxisMax(f.length);
+			chart.getStyler().setYAxisMin(-f.length/2);
+			chart.getStyler().setYAxisMax(f.length/2);
+		}
+			
 		chart.getStyler().setLegendVisible(false);
 		
 		new SwingWrapper<XYChart>(chart).displayChart();

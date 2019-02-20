@@ -22,7 +22,7 @@ public class TrajectoryDiagram {
 		}
 
 //		// create chart and show it
-		XYChart chart = new XYChartBuilder().width(600).height(400).title("Trajectory").xAxisTitle("t").yAxisTitle("y").build();
+		XYChart chart = new XYChartBuilder().width(1200).height(1100).title("Trajectory").xAxisTitle("t").yAxisTitle("y").build();
 	
 		chart.getStyler().setDefaultSeriesRenderStyle(XYSeriesRenderStyle.Line);
 		chart.getStyler().setChartTitleVisible(false);
@@ -31,9 +31,12 @@ public class TrajectoryDiagram {
 		XYSeries series = chart.addSeries("P(t)", xDataProj, yDataProj);
 		series.setMarker(SeriesMarkers.CIRCLE);
 			
-//		chart.getStyler().setXAxisMin(-0.04d);
-//		chart.getStyler().setXAxisMax(0d);
-//		chart.getStyler().setYAxisMax(0.04d);
+
+		chart.getStyler().setXAxisMin(xDataProj[0]);
+		chart.getStyler().setXAxisMax(0d);
+		chart.getStyler().setYAxisMin(xDataProj[0]/2);
+		chart.getStyler().setYAxisMax(-xDataProj[0]/2);
+
 		
 		chart.getStyler().setLegendVisible(false);
 		

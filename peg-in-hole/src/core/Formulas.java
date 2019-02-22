@@ -137,7 +137,6 @@ public class Formulas {
 	 * @return
 	 */
 	private static double deflectionYPi(FlexibleObject f, double angle, double x) {
-		// TODO WRONG FORMULA!!
 		System.out.println(angle);
 		double E = f.youngsModulus;
 		double I = f.secondMomentOfInertia;

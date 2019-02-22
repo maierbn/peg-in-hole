@@ -69,6 +69,6 @@ public class DeflectionDiagram {
 			
 		series.setMarker(SeriesMarkers.CIRCLE);
 		
-		new SwingWrapper<XYChart>(chart).displayChart();
+		new SwingWrapper<XYChart>(chart).displayChart("Deflection Diagram");
 	}
 }

@@ -14,14 +14,19 @@ import org.knowm.xchart.style.markers.SeriesMarkers;
 
 import core.FlexibleObject;
 import javafx.geometry.Point2D;
+import javafx.geometry.Point3D;
+import javafx.scene.transform.Rotate;
 
 public class AnimatedDeflectionDiagram {
 	public static void draw(FlexibleObject f, 
-							ArrayList<Point2D[]> deflections) {
+							ArrayList<Point2D[]> deflections,
+							Point3D[] trajectory) {
 		
 		// initially fill render data with values at P0
-		double[] xData = generateRenderData(f, deflections.get(0))[0];
-		double[] yData = generateRenderData(f, deflections.get(0))[1];
+		double[] xData = deflectionRenderData(f, deflections.get(0))[0];
+		double[] yData = deflectionRenderData(f, deflections.get(0))[1];
+		double[] xDataProj = trajectoryRenderData(trajectory)[0];
+		double[] yDataProj = trajectoryRenderData(trajectory)[1];
 
 		// create chart object
 		XYChart chart = new XYChartBuilder()
@@ -31,10 +36,15 @@ public class AnimatedDeflectionDiagram {
 				.xAxisTitle("x in m, real world")
 				.yAxisTitle("x in m, real world")
 				.build();
-		XYSeries series = chart.addSeries(
+		XYSeries deflectionSeries = chart.addSeries(
 				"Deflection of flexible Object, w(x)", 
 				xData, 
 				yData);
+		XYSeries trajectorySeries = chart.addSeries(
+				"Trajectory of the arm, B(t)", 
+				xDataProj, 
+				yDataProj);
+
 		
 		((AxesChartStyler) chart.getStyler()
 				.setDefaultSeriesRenderStyle(XYSeriesRenderStyle.Line)
@@ -45,23 +55,15 @@ public class AnimatedDeflectionDiagram {
 				.setLegendPosition(LegendPosition.InsideNE))
 				.setMarkerSize(8);
 		
-		if (xData[1] < 0) {
-			chart.getStyler()
-				.setXAxisMin(-f.length)
-				.setXAxisMax(0d)
-				.setYAxisMin(-f.length/2)
-				.setYAxisMax(f.length/2);
-		} else {
-			chart.getStyler()
-				.setXAxisMin(0d)
-				.setXAxisMax(f.length)
-				.setYAxisMin(-f.length/2)
-				.setYAxisMax(f.length/2);
-		}
+		chart.getStyler()
+			.setXAxisMin(-f.length)
+			.setXAxisMax(0d)
+			.setYAxisMin(-f.length/2)
+			.setYAxisMax(f.length/2);
 			
-		series.setMarker(SeriesMarkers.CIRCLE);
+		deflectionSeries.setMarker(SeriesMarkers.NONE);
+		trajectorySeries.setMarker(SeriesMarkers.CIRCLE);
 
-		
 		// show the chart
 		SwingWrapper<XYChart> sw = new SwingWrapper<XYChart>(chart);
 		sw.displayChart("Animated Deflection Diagram");
@@ -76,8 +78,8 @@ public class AnimatedDeflectionDiagram {
 			}
 			
 			// generate render data for new point
-			xData = generateRenderData(f, deflections.get(i))[0];
-			yData = generateRenderData(f, deflections.get(i))[1];
+			xData = deflectionRenderData(f, deflections.get(i))[0];
+			yData = deflectionRenderData(f, deflections.get(i))[1];
 			
 			// update render data, redraw
 			chart.updateXYSeries(
@@ -89,7 +91,7 @@ public class AnimatedDeflectionDiagram {
 		}
 	}
 	
-	public static double[][] generateRenderData(FlexibleObject f, Point2D[] deflection){
+	public static double[][] deflectionRenderData(FlexibleObject f, Point2D[] deflection){
 		// corrected x axis values
 		double[] xData = new double[f.deflectionRes+1];
 		for (int i = 0; i < xData.length; i++) {
@@ -105,5 +107,18 @@ public class AnimatedDeflectionDiagram {
 		double[] yDataInverted = DoubleStream.of(yData).map(x -> -x).toArray();
 		
 		return new double[][] {xData, yDataInverted};
+	}
+	
+	public static double[][] trajectoryRenderData(Point3D[] trajectory){
+		
+		double[] xDataProj = new double[trajectory.length];
+		double[] yDataProj = new double[trajectory.length];
+		
+		for (int i = 0; i < trajectory.length; i++) {
+			xDataProj[i] = trajectory[i].getX();
+			yDataProj[i] = trajectory[i].getY();
+		}
+		
+		return new double[][] {xDataProj, yDataProj};
 	}
 }

@@ -120,12 +120,14 @@ public class Formulas {
 			x += stepSize;
 		}
 
-		//shift the deflectionPoints to trajectory (X,Y)
-		Point2D displacement = new Point2D(trajectoryPoint.getX(), trajectoryPoint.getY());
+		/**
+		 * shift the deflectionPoints to trajectory (X,Y)
+		 * Y needs to be negative, else the deflections follow an inverted trajectory
+		 */
+		Point2D displacement = new Point2D(trajectoryPoint.getX(), -trajectoryPoint.getY());
 		for (int j = 0; j < deflection.length; j++) {
 			deflection[j] = deflection[j].add(displacement);
 		}
-
 		return deflection;
 	}
 
@@ -137,14 +139,31 @@ public class Formulas {
 	 * @return
 	 */
 	private static double deflectionYPi(FlexibleObject f, double angle, double x) {
-		System.out.println(angle);
+//		System.out.println(angle);
 		double E = f.youngsModulus;
 		double I = f.secondMomentOfInertia;
 		double q = f.width * f.thickness * f.density * Constants.gravitationalAcceleration;
 		double L = f.length;
 		double fraction = (q * x * x * (6 * L * L - 4 * L * x + x * x)) / (24 * E * I);
-		return fraction + Math.tan(angle) * x / E*I;
-		//return Math.toRadians(angle) * x / (E * I);
+		return fraction;
+		/**
+		 * TODO: returning just the original deflection without rotation, since
+		 * the following (now with proper braces lol) formula leads to overshoots by *an actual order of magnitude*
+		 * also, even downscaled back by a factor of 0.0001, the deflection looks just wrong
+		 * Maybe the additional term is grossly wrong.
+		 * 
+		 * IMHO, the original paper disregarded to account for deflection changes due to rotation AT ALL,
+		 * since bernoulli-euler for cantilever beams only applies to small rotations as well as uniformily distributed load. 
+		 * 
+		 * the latter *does not longer apply* if we start to rotate the beam. if we rotate the load vector
+		 * with the beam, we would not see a difference, hence no reason to recalculate for each trajectory point.
+		 * 
+		 * we already agreed, that, since q=const, we disregard the true gravity vector and instead opt for one,
+		 * which is always orthogonal to the flexible object.
+		 * 
+		 * TL;DR: looks like original paper only uses one deflection for all rotation angles. what do *we* do?
+		 */
+		//return fraction + Math.tan(Math.toRadians(angle)) * x / (E*I);
 	}
 
 	/**

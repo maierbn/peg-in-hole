@@ -2,9 +2,6 @@ package userInterface;
 
 import java.awt.Color;
 import org.knowm.xchart.*;
-import org.knowm.xchart.XYChart;
-import org.knowm.xchart.XYChartBuilder;
-import org.knowm.xchart.XYSeries;
 import org.knowm.xchart.XYSeries.XYSeriesRenderStyle;
 import org.knowm.xchart.internal.series.MarkerSeries;
 import org.knowm.xchart.style.AxesChartStyler;
@@ -16,7 +13,7 @@ import javafx.scene.transform.Rotate;
 
 public class TrajectoryDiagram {
 
-	public static void draw(int resolution, Point3D[] trajectory) {
+	public static void draw(int resolution, Point3D[] trajectory, Point3D cp) {
 		
 		/**
 		 * zDataProj contains the coordinates of the *endpoint* of the line
@@ -54,7 +51,17 @@ public class TrajectoryDiagram {
 				.xAxisTitle("x in m, real world")
 				.yAxisTitle("y in m, real world")
 				.build();
-		XYSeries series = chart.addSeries("Trajectory of the arm, B(t)", xDataProj, yDataProj);
+		XYSeries series = chart
+				.addSeries(
+						"Trajectory of the arm, B(t)", 
+						xDataProj, 
+						yDataProj);
+		
+		XYSeries cpPlot = chart
+				.addSeries(
+						"Control Point", 
+						new double[] {cp.getX()},
+						new double[] {cp.getY()});
 		
 		/**
 		 * quick and dirty way to draw multiple lines is to create multiple series
@@ -92,7 +99,10 @@ public class TrajectoryDiagram {
 		
 		series.setMarker(SeriesMarkers.CIRCLE)
 			.setToolTips(zDataAngle);
+		cpPlot.setMarker(SeriesMarkers.DIAMOND)
+			.setToolTips(new String[] {"Control "+cp.toString()});
 		
-		new SwingWrapper<XYChart>(chart).displayChart();
+		SwingWrapper<XYChart> sw = new SwingWrapper<XYChart>(chart);
+		sw.displayChart("Arm Trajectory");
 	}
 }

@@ -57,7 +57,7 @@ public class Simulation {
 	}
 
 	public void drawTrajectory() {
-		TrajectoryDiagram.draw(trajectoryRes, trajectory);
+		TrajectoryDiagram.draw(trajectoryRes, trajectory, cp);
 	}
 
 	public void calcDeflectionsWithTrajectory() {

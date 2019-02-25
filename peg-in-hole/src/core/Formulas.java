@@ -145,8 +145,10 @@ public class Formulas {
 		double q = f.width * f.thickness * f.density * Constants.gravitationalAcceleration;
 		double L = f.length;
 		double fraction = (q * x * x * (6 * L * L - 4 * L * x + x * x)) / (24 * E * I);
-		return fraction;
 		/**
+		 * UPDATE: fixed the ODE solution for boundary condition w'(0)=tan(a).
+		 * Resulting deflections still do not match the angle.
+		 * 
 		 * TODO: returning just the original deflection without rotation, since
 		 * the following (now with proper braces lol) formula leads to overshoots by *an actual order of magnitude*
 		 * also, even downscaled back by a factor of 0.0001, the deflection looks just wrong
@@ -163,7 +165,7 @@ public class Formulas {
 		 * 
 		 * TL;DR: looks like original paper only uses one deflection for all rotation angles. what do *we* do?
 		 */
-		//return fraction + Math.tan(Math.toRadians(angle)) * x / (E*I);
+		return fraction + (x * Math.tan(Math.toRadians(angle)));
 	}
 
 	/**

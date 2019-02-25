@@ -33,10 +33,10 @@ public class Main {
 		
 //		DeflectionDiagram.draw(f, testSim.deflections.get(testSim.deflections.size() - 1));
 		
-//		f.drawDeflectionP0();
-//		DeflectionDiagram.draw(f, testSim.deflections.get(1));
-//		DeflectionDiagram.draw(f, testSim.deflections.get(2));
-		AnimatedDeflectionDiagram.draw(f, testSim.deflections, testSim.trajectory);
+		f.drawDeflectionP0();
+		DeflectionDiagram.draw(f, testSim.deflections.get(1));
+		DeflectionDiagram.draw(f, testSim.deflections.get(2));
+//		AnimatedDeflectionDiagram.draw(f, testSim.deflections, testSim.trajectory);
 		
 		testSim.calcSmallestDistanceToHole();
 	}

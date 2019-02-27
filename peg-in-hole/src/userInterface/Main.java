@@ -23,7 +23,7 @@ public class Main {
 
 		FlexibleObject f = new FlexibleObject(length, width, heigth, density, youngsModulus, deflectionRes);
 
-		Point3D cp = new Point3D(-0.035, 0.01, 0.16);
+		Point3D cp = new Point3D(-0.03, 0.01, -15.0);
 		Simulation testSim = new Simulation(f, cp, trajectoryRes);
 		
 		testSim.calcTrajectory();
@@ -36,7 +36,7 @@ public class Main {
 		f.drawDeflectionP0();
 		DeflectionDiagram.draw(f, testSim.deflections.get(1));
 		DeflectionDiagram.draw(f, testSim.deflections.get(2));
-//		AnimatedDeflectionDiagram.draw(f, testSim.deflections, testSim.trajectory);
+		AnimatedDeflectionDiagram.draw(f, testSim.deflections, testSim.trajectory);
 		
 		testSim.calcSmallestDistanceToHole();
 	}

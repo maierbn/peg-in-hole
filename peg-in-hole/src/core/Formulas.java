@@ -146,6 +146,9 @@ public class Formulas {
 		double L = f.length;
 		double fraction = (q * x * x * (6 * L * L - 4 * L * x + x * x)) / (24 * E * I);
 		/**
+		 * UPDATE 2: the deflections now mach the angle. for some reason unknown, the angle has to be negated.
+		 * Don't ask how long it took me to find it.
+		 * 
 		 * UPDATE: fixed the ODE solution for boundary condition w'(0)=tan(a).
 		 * Resulting deflections still do not match the angle.
 		 * 
@@ -165,7 +168,7 @@ public class Formulas {
 		 * 
 		 * TL;DR: looks like original paper only uses one deflection for all rotation angles. what do *we* do?
 		 */
-		return fraction + (x * Math.tan(Math.toRadians(angle)));
+		return fraction + (x * Math.tan(-Math.toRadians(angle)));
 	}
 
 	/**

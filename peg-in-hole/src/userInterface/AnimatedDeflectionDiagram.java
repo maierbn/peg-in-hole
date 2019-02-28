@@ -1,7 +1,15 @@
 package userInterface;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.stream.DoubleStream;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
+import javax.swing.KeyStroke;
 
 import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XYChart;
@@ -15,9 +23,9 @@ import org.knowm.xchart.style.markers.SeriesMarkers;
 import core.FlexibleObject;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
-import javafx.scene.transform.Rotate;
 
 public class AnimatedDeflectionDiagram {
+	
 	public static void draw(FlexibleObject f, 
 							ArrayList<Point2D[]> deflections,
 							Point3D[] trajectory) {
@@ -68,27 +76,82 @@ public class AnimatedDeflectionDiagram {
 		SwingWrapper<XYChart> sw = new SwingWrapper<XYChart>(chart);
 		sw.displayChart("Animated Deflection Diagram");
 		
-		for (int i = 1; i < deflections.size(); i++) {
-			// wait a second
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		/**
+		 * "This is so dirty, I want to take a shower now, just because I read it"
+		 */
+		final int[] counter = new int[] {0};
+		
+		String actionKeyL = "L";
+		Action onLeftArrow = new AbstractAction(actionKeyL) {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+
+				counter[0] = (counter[0]<=0) ? counter[0] : counter[0]-1;
+
+				double[] xData = deflectionRenderData(f, deflections.get(counter[0]))[0];
+				double[] yData = deflectionRenderData(f, deflections.get(counter[0]))[1];
+				
+				// update render data, redraw
+				chart.updateXYSeries(
+						"Deflection of flexible Object, w(x)", 
+						xData, 
+						yData, 
+						null);
+				sw.repaintChart();
+				
 			}
+		};
+		
+		String actionKeyR = "R";
+		Action onRightArrow = new AbstractAction(actionKeyR) {
 			
-			// generate render data for new point
-			xData = deflectionRenderData(f, deflections.get(i))[0];
-			yData = deflectionRenderData(f, deflections.get(i))[1];
-			
-			// update render data, redraw
-			chart.updateXYSeries(
-					"Deflection of flexible Object, w(x)", 
-					xData, 
-					yData, 
-					null);
-			sw.repaintChart();
-		}
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				counter[0] = (counter[0]<deflections.size()-1) ? counter[0]+1 : counter[0];
+				
+				double[] xData = deflectionRenderData(f, deflections.get(counter[0]))[0];
+				double[] yData = deflectionRenderData(f, deflections.get(counter[0]))[1];
+				
+				// update render data, redraw
+				chart.updateXYSeries(
+						"Deflection of flexible Object, w(x)", 
+						xData, 
+						yData, 
+						null);
+				sw.repaintChart();
+			}
+		};
+		
+		InputMap keypressListener = sw.getXChartPanel().getInputMap();
+		keypressListener.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), actionKeyL);
+		keypressListener.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), actionKeyR);
+		
+		ActionMap actionToKeypressMapper = sw.getXChartPanel().getActionMap();
+		actionToKeypressMapper.put(actionKeyL, onLeftArrow);
+		actionToKeypressMapper.put(actionKeyR, onRightArrow);
+		
+//		for (int i = 1; i < deflections.size(); i++) {
+//			// wait a second
+//			try {
+//				Thread.sleep(1000);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			
+//			// generate render data for new point
+//			xData = deflectionRenderData(f, deflections.get(i))[0];
+//			yData = deflectionRenderData(f, deflections.get(i))[1];
+//			
+//			// update render data, redraw
+//			chart.updateXYSeries(
+//					"Deflection of flexible Object, w(x)", 
+//					xData, 
+//					yData, 
+//					null);
+//			sw.repaintChart();
+//		}
 	}
 	
 	public static double[][] deflectionRenderData(FlexibleObject f, Point2D[] deflection){

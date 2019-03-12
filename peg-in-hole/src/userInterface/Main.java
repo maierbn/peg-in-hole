@@ -20,24 +20,26 @@ public class Main {
 		 */
 		int deflectionRes = 30;
 		int trajectoryRes = 30;
+		double slitSize = 0.1;
 
 		FlexibleObject f = new FlexibleObject(length, width, heigth, density, youngsModulus, deflectionRes);
 
 		Point3D cp = new Point3D(-0.03, 0.01, -15.0);
-		Simulation testSim = new Simulation(f, cp, trajectoryRes);
+		Simulation testSim = new Simulation(f, cp, trajectoryRes, slitSize);
 		
 		testSim.calcTrajectory();
 		testSim.drawTrajectory();
 
 		testSim.calcDeflectionsWithTrajectory();
+		double clearance = testSim.calcClearance();
 		
 //		DeflectionDiagram.draw(f, testSim.deflections.get(testSim.deflections.size() - 1));
+		System.out.println("Resulting clearance is " + clearance);
 		
 		f.drawDeflectionP0();
 		DeflectionDiagram.draw(f, testSim.deflections.get(1));
 		DeflectionDiagram.draw(f, testSim.deflections.get(2));
 		AnimatedDeflectionDiagram.draw(f, testSim.deflections, testSim.trajectory);
 		
-		testSim.calcSmallestDistanceToHole();
 	}
 }

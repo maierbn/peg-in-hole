@@ -1,10 +1,14 @@
 package core;
 
+import java.awt.geom.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
+import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Translate;
 import userInterface.TrajectoryDiagram;
 
 public class Simulation {
@@ -17,12 +21,14 @@ public class Simulation {
 	public Point3D[] trajectory;
 
 	public Point3D cp;
+	public double slitSize;
 
-	public Simulation(FlexibleObject f, Point3D cp, int trajectoryRes) {
+	public Simulation(FlexibleObject f, Point3D cp, int trajectoryRes, double slitSize) {
 		this.f = f;
 		this.deflectionRes = f.deflectionRes;
 		this.trajectoryRes = trajectoryRes;
 		this.cp = cp;
+		this.slitSize=slitSize;
 		
 		deflections.add(f.deflectionP0);
 	}
@@ -83,9 +89,65 @@ public class Simulation {
 	 * 
 	 * @return
 	 */
-	public double calcSmallestDistanceToHole() {
-		// TODO
-		return 0;
+	public double calcClearance() {
+		double minimalClearance = Double.MAX_VALUE;
+		BoundingBox upperSlitBoundingBox = new BoundingBox(0, (this.slitSize/2)+f.length, 0, f.length);
+		BoundingBox lowerSlitBoundingBox = new BoundingBox(0, -this.slitSize/2, 0, f.length);
+		
+		/**
+		 * we use .sublist(1, .size()) to remove the first (read: initial) deflection
+		 * it would skew the min distance
+		 */
+		int i = 1;
+		for (Point2D[] deflectionArray : deflections.subList(1, deflections.size())) {
+			
+			int j;
+			for (j = 0; j < deflectionArray.length; j++) {
+				if (deflectionArray[j].getX() > 0) {
+					break;
+				}
+			}
+			
+			Point2D pointRightFromHole = deflectionArray[j];
+			Point2D pointLeftFromHole = deflectionArray[j-1];
+			
+			double width = pointRightFromHole.distance(pointLeftFromHole);
+			double height = f.thickness;
+			BoundingBox box = new BoundingBox(pointLeftFromHole.getX(), pointLeftFromHole.getY()+height/2, width, height);
+			double angle = pointRightFromHole.angle(pointLeftFromHole);
+			Rotate rot = new Rotate(angle, pointLeftFromHole.getX(), pointLeftFromHole.getY());
+			
+			rot.transform(box);
+			
+			// box has been placed in the slit and rotated accordingly 
+			
+			if (box.intersects(upperSlitBoundingBox) || box.intersects(lowerSlitBoundingBox)) {
+				System.out.println("Collision occured in step " + i);
+				return -1;
+			}
+			
+			// if this gets executed, no collision has been found, we compute the current clearance to the slit edges
+			
+			double upperClearance = Line2D.ptLineDist(pointLeftFromHole.getX(), 
+														pointLeftFromHole.getY(), 
+														pointRightFromHole.getX(),
+														pointRightFromHole.getY(), 
+														0, 
+														this.slitSize/2) - f.thickness / 2;
+			double lowerClearance = Line2D.ptLineDist(pointLeftFromHole.getX(), 
+														pointLeftFromHole.getY(), 
+														pointRightFromHole.getX(),
+														pointRightFromHole.getY(), 
+														0, 
+														-this.slitSize/2) - f.thickness / 2;
+			double clearance = Math.min(upperClearance, lowerClearance);
+			
+			if (clearance < minimalClearance) {
+				minimalClearance = clearance;
+			}
+			
+			i++;
+		}
+		return minimalClearance;
 	}
-
 }

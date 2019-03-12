@@ -8,7 +8,7 @@ public class Main {
 	public static void main(String[] args) {
 		double length = 0.040; // meter
 		double width = 0.015; // meter
-		double heigth = 0.002; // meter
+		double thickness = 0.002; // meter
 		double density = 1150;
 		double youngsModulus = 3.6E6;
 
@@ -20,9 +20,9 @@ public class Main {
 		 */
 		int deflectionRes = 30;
 		int trajectoryRes = 30;
-		double slitSize = 0.1;
+		double slitSize = 0.005;
 
-		FlexibleObject f = new FlexibleObject(length, width, heigth, density, youngsModulus, deflectionRes);
+		FlexibleObject f = new FlexibleObject(length, width, thickness, density, youngsModulus, deflectionRes);
 
 		Point3D cp = new Point3D(-0.03, 0.01, -15.0);
 		Simulation testSim = new Simulation(f, cp, trajectoryRes, slitSize);

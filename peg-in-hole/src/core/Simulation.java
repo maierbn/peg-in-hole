@@ -91,8 +91,8 @@ public class Simulation {
 	 */
 	public double calcClearance() {
 		double minimalClearance = Double.MAX_VALUE;
-		BoundingBox upperSlitBoundingBox = new BoundingBox(0, (this.slitSize/2)+f.length, 0, f.length);
-		BoundingBox lowerSlitBoundingBox = new BoundingBox(0, -this.slitSize/2, 0, f.length);
+		BoundingBox upperSlitBoundingBox = new BoundingBox(0, this.slitSize/2, 0, f.length);
+		BoundingBox lowerSlitBoundingBox = new BoundingBox(0, -((this.slitSize/2)+f.length), 0, f.length);
 		
 		/**
 		 * we use .sublist(1, .size()) to remove the first (read: initial) deflection
@@ -112,8 +112,7 @@ public class Simulation {
 			Point2D pointLeftFromHole = deflectionArray[j-1];
 			
 			double width = pointRightFromHole.distance(pointLeftFromHole);
-			double height = f.thickness;
-			BoundingBox box = new BoundingBox(pointLeftFromHole.getX(), pointLeftFromHole.getY()+height/2, width, height);
+			BoundingBox box = new BoundingBox(pointLeftFromHole.getX(), pointLeftFromHole.getY()-f.thickness/2, width, f.thickness);
 			double angle = pointRightFromHole.angle(pointLeftFromHole);
 			Rotate rot = new Rotate(angle, pointLeftFromHole.getX(), pointLeftFromHole.getY());
 			

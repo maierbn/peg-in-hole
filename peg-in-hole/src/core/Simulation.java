@@ -111,6 +111,10 @@ public class Simulation {
 			Point2D pointRightFromHole = deflectionArray[j];
 			Point2D pointLeftFromHole = deflectionArray[j-1];
 			
+			/**
+			 * creates a bounding box between a deflection point left from the y axis and one to the right.
+			 * then the bounding box gets rotated accordingly.
+			 */
 			double width = pointRightFromHole.distance(pointLeftFromHole);
 			BoundingBox box = new BoundingBox(pointLeftFromHole.getX(), pointLeftFromHole.getY()-f.thickness/2, width, f.thickness);
 			double angle = pointRightFromHole.angle(pointLeftFromHole);

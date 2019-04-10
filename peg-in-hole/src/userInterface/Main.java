@@ -39,7 +39,7 @@ public class Main {
 		f.drawDeflectionP0();
 		DeflectionDiagram.draw(f, testSim.deflections.get(1));
 		DeflectionDiagram.draw(f, testSim.deflections.get(2));
-		AnimatedDeflectionDiagram.draw(f, testSim.deflections, testSim.trajectory);
+		AnimatedDeflectionDiagram.draw(f, testSim.deflections, testSim.trajectory, testSim.slitSize);
 		
 	}
 }

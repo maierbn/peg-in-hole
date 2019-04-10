@@ -1,5 +1,6 @@
 package userInterface;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ import org.knowm.xchart.style.Styler.LegendPosition;
 import org.knowm.xchart.style.markers.SeriesMarkers;
 
 import core.FlexibleObject;
+import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 
@@ -28,7 +30,31 @@ public class AnimatedDeflectionDiagram {
 	
 	public static void draw(FlexibleObject f, 
 							ArrayList<Point2D[]> deflections,
-							Point3D[] trajectory) {
+							Point3D[] trajectory, double slitSize) {
+		// bounding boxes
+		BoundingBox upperSlitBoundingBox = new BoundingBox(0, slitSize/2, 0, f.length);
+		BoundingBox lowerSlitBoundingBox = new BoundingBox(0, -((slitSize/2)+f.length), 0, f.length);
+		
+		double[] drawUpperBoundingBoxX = new double[] {
+				upperSlitBoundingBox.getMinX(),
+				upperSlitBoundingBox.getMinX()				
+				};
+		
+		double[] drawUpperBoundingBoxY = new double[] {
+				upperSlitBoundingBox.getMaxY(),
+				upperSlitBoundingBox.getMinY()
+				};
+		
+		double[] drawLowerBoundingBoxX = new double[] {
+				lowerSlitBoundingBox.getMinX(),
+				lowerSlitBoundingBox.getMinX()
+				};
+		
+		double[] drawLowerBoundingBoxY = new double[] {
+				lowerSlitBoundingBox.getMaxY(),
+				lowerSlitBoundingBox.getMinY()
+				};	
+		
 		
 		// initially fill render data with values at P0
 		double[] xData = deflectionRenderData(f, deflections.get(0))[0];
@@ -52,6 +78,14 @@ public class AnimatedDeflectionDiagram {
 				"Trajectory of the arm, B(t)", 
 				xDataProj, 
 				yDataProj);
+		XYSeries upperBoxSeries = chart.addSeries(
+				"upper bounding box", 
+				drawUpperBoundingBoxX,
+				drawUpperBoundingBoxY);
+		XYSeries lowerBoxSeries = chart.addSeries(
+				"lower bounding box", 
+				drawLowerBoundingBoxX,
+				drawLowerBoundingBoxY);
 
 		
 		((AxesChartStyler) chart.getStyler()
@@ -71,6 +105,10 @@ public class AnimatedDeflectionDiagram {
 			
 		deflectionSeries.setMarker(SeriesMarkers.NONE);
 		trajectorySeries.setMarker(SeriesMarkers.CIRCLE);
+		upperBoxSeries.setMarker(SeriesMarkers.NONE);
+		lowerBoxSeries.setMarker(SeriesMarkers.NONE);
+		upperBoxSeries.setLineColor(Color.MAGENTA);
+		lowerBoxSeries.setLineColor(Color.MAGENTA);
 
 		// show the chart
 		SwingWrapper<XYChart> sw = new SwingWrapper<XYChart>(chart);

@@ -70,8 +70,12 @@ public class AnimatedDeflectionDiagram {
 				.xAxisTitle("x in m, real world")
 				.yAxisTitle("x in m, real world")
 				.build();
-		XYSeries deflectionSeries = chart.addSeries(
-				"Deflection of flexible Object, w(x)", 
+		XYSeries deflectionSeriesUpper = chart.addSeries(
+				"Deflection of flexible Object, upper, w(x)", 
+				xData, 
+				yData);
+		XYSeries deflectionSeriesLower = chart.addSeries(
+				"Deflection of flexible Object, lower, w(x)", 
 				xData, 
 				yData);
 		XYSeries trajectorySeries = chart.addSeries(
@@ -102,13 +106,23 @@ public class AnimatedDeflectionDiagram {
 			.setXAxisMax(0d)
 			.setYAxisMin(-f.length/2)
 			.setYAxisMax(f.length/2);
-			
-		deflectionSeries.setMarker(SeriesMarkers.NONE);
-		trajectorySeries.setMarker(SeriesMarkers.CIRCLE);
-		upperBoxSeries.setMarker(SeriesMarkers.NONE);
-		lowerBoxSeries.setMarker(SeriesMarkers.NONE);
-		upperBoxSeries.setLineColor(Color.MAGENTA);
-		lowerBoxSeries.setLineColor(Color.MAGENTA);
+		
+		trajectorySeries
+			.setMarker(SeriesMarkers.CIRCLE)
+			.setMarkerColor(Color.ORANGE)
+			.setLineColor(Color.ORANGE);
+		deflectionSeriesUpper
+			.setMarker(SeriesMarkers.NONE)
+			.setLineColor(Color.BLUE);	
+		deflectionSeriesLower
+			.setMarker(SeriesMarkers.NONE)
+			.setLineColor(Color.BLUE);
+		upperBoxSeries
+			.setMarker(SeriesMarkers.NONE)
+			.setLineColor(Color.MAGENTA);
+		lowerBoxSeries
+			.setMarker(SeriesMarkers.NONE)
+			.setLineColor(Color.MAGENTA);
 
 		// show the chart
 		SwingWrapper<XYChart> sw = new SwingWrapper<XYChart>(chart);
@@ -128,13 +142,19 @@ public class AnimatedDeflectionDiagram {
 				counter[0] = (counter[0]<=0) ? counter[0] : counter[0]-1;
 
 				double[] xData = deflectionRenderData(f, deflections.get(counter[0]))[0];
-				double[] yData = deflectionRenderData(f, deflections.get(counter[0]))[1];
-				
+				double[] yDataUpper = deflectionRenderData(f, deflections.get(counter[0]))[1];
+				double[] yDataLower = deflectionRenderData(f, deflections.get(counter[0]))[2];
+
 				// update render data, redraw
 				chart.updateXYSeries(
-						"Deflection of flexible Object, w(x)", 
+						"Deflection of flexible Object, upper, w(x)", 
 						xData, 
-						yData, 
+						yDataUpper, 
+						null);
+				chart.updateXYSeries(
+						"Deflection of flexible Object, lower, w(x)", 
+						xData, 
+						yDataLower, 
 						null);
 				sw.repaintChart();
 				
@@ -149,13 +169,19 @@ public class AnimatedDeflectionDiagram {
 				counter[0] = (counter[0]<deflections.size()-1) ? counter[0]+1 : counter[0];
 				
 				double[] xData = deflectionRenderData(f, deflections.get(counter[0]))[0];
-				double[] yData = deflectionRenderData(f, deflections.get(counter[0]))[1];
-				
+				double[] yDataUpper = deflectionRenderData(f, deflections.get(counter[0]))[1];
+				double[] yDataLower = deflectionRenderData(f, deflections.get(counter[0]))[2];
+
 				// update render data, redraw
 				chart.updateXYSeries(
-						"Deflection of flexible Object, w(x)", 
+						"Deflection of flexible Object, upper, w(x)", 
 						xData, 
-						yData, 
+						yDataUpper, 
+						null);
+				chart.updateXYSeries(
+						"Deflection of flexible Object, lower, w(x)", 
+						xData, 
+						yDataLower, 
 						null);
 				sw.repaintChart();
 			}
@@ -200,14 +226,19 @@ public class AnimatedDeflectionDiagram {
 		}
 		
 		// get the deflection values from the flexibleObject as graph y data
-		double[] yData = new double[f.deflectionRes+1];
-		for (int i = 0; i < yData.length; i++) {
-			yData[i] = deflection[i].getY();
+		double[] yDataUpper = new double[f.deflectionRes+1];
+		for (int i = 0; i < yDataUpper.length; i++) {
+			yDataUpper[i] = deflection[i].getY()+f.thickness/2f;
+		}
+		double[] yDataLower = new double[f.deflectionRes+1];
+		for (int i = 0; i < yDataLower.length; i++) {
+			yDataLower[i] = deflection[i].getY()-f.thickness/2f;
 		}
 		// cause it doesn't bend upwards *lennyface*
-		double[] yDataInverted = DoubleStream.of(yData).map(x -> -x).toArray();
-		
-		return new double[][] {xData, yDataInverted};
+		double[] yDataInvertedUpper = DoubleStream.of(yDataUpper).map(x -> -x).toArray();
+		double[] yDataInvertedLower = DoubleStream.of(yDataLower).map(x -> -x).toArray();
+
+		return new double[][] {xData, yDataInvertedUpper, yDataInvertedLower};
 	}
 	
 	public static double[][] trajectoryRenderData(Point3D[] trajectory){

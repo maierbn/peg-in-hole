@@ -251,4 +251,53 @@ public class Formulas {
 
 		return p0.add(coeffMultB);
 	}
+	/**
+	 * generates possible control points in respect to the object in initial position
+	 * x axis is sampled every 1/complexity of the object length
+	 * y axis is sampled every 1/complexity of the object length
+	 * angle is sampled every 1/complexity between initial angle and zero
+	 * 
+	 * all values are real-life meters / degrees
+	 * 
+	 * @param f				the flexible object
+	 * @param complexity	amount of samples per dimension, including edge cases
+	 * @return				an array of potential control points
+	 */
+	public static Point3D[] generateCPs(FlexibleObject f, int complexity) {
+		Point3D[] possibleCPs = new Point3D[(int) Math.pow(complexity,3)];
+		double stepSizeXY = f.length/(double)(complexity-1);
+		
+		Point2D vectorP0toPnext = f.deflectionP0[1].subtract(f.deflectionP0[0]);
+		double angleP0 = vectorP0toPnext.angle(1d, 0d);
+		double stepSizeAngle = angleP0/(double)(complexity-1);
+		
+		
+		
+		int i = 0;
+		double x = f.deflectionP0[0].getX();
+		for (int j = 0; j < complexity; j++) {
+			
+			double y = f.deflectionP0[0].getY();
+			for (int k = 0; k < complexity; k++) {
+				
+				double z = angleP0;
+				for (int l = 0; l < complexity; l++) {
+					possibleCPs[i] = new Point3D(x, y, z);
+					z-=stepSizeAngle;
+					i++;
+				}
+				y+=stepSizeXY;
+			}
+			x+=stepSizeXY;
+		}
+//		for (double x = f.deflectionP0[0].getX(); x <= 0; x+=stepSizeXY) {
+//			for (double y = f.deflectionP0[0].getY(); y <= f.length; y+=stepSizeXY) {
+//				for(double z = angleP0; z >=0; z-=stepSizeAngle) {
+//					possibleCPs[i] = new Point3D(x, y, z);
+//					i++;
+//				}
+//			}
+//		}
+		return possibleCPs;
+	}
 }

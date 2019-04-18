@@ -1,6 +1,7 @@
 package userInterface;
 
 import core.FlexibleObject;
+import core.Formulas;
 import core.Simulation;
 import javafx.geometry.Point3D;
 
@@ -24,22 +25,24 @@ public class Main {
 
 		FlexibleObject f = new FlexibleObject(length, width, thickness, density, youngsModulus, deflectionRes);
 
-		Point3D cp = new Point3D(-0.03, 0.01, -15.0);
-		Simulation testSim = new Simulation(f, cp, trajectoryRes, slitSize);
+		// CONTROL POINTS
+		Point3D[] generatedCPs = Formulas.generateCPs(f, 5);
+//		Point3D cp = new Point3D(-0.03, 0.01, -15.0);
+		Point3D cp = generatedCPs[(int) (Math.random()*generatedCPs.length)];
 		
+		// SIMULATION RUN
+		Simulation testSim = new Simulation(f, cp, trajectoryRes, slitSize);
 		testSim.calcTrajectory();
-		testSim.drawTrajectory();
-
+//		testSim.drawTrajectory();
 		testSim.calcDeflectionsWithTrajectory();
 		double clearance = testSim.calcClearance();
-		
-//		DeflectionDiagram.draw(f, testSim.deflections.get(testSim.deflections.size() - 1));
 		System.out.println("Resulting clearance is " + clearance);
 		
-		f.drawDeflectionP0();
-		DeflectionDiagram.draw(f, testSim.deflections.get(1));
-		DeflectionDiagram.draw(f, testSim.deflections.get(2));
-		AnimatedDeflectionDiagram.draw(f, testSim.deflections, testSim.trajectory, testSim.slitSize);
-		
+		// DIAGRAMS
+//		DeflectionDiagram.draw(f, testSim.deflections.get(testSim.deflections.size() - 1));
+//		f.drawDeflectionP0();
+//		DeflectionDiagram.draw(f, testSim.deflections.get(1));
+//		DeflectionDiagram.draw(f, testSim.deflections.get(2));
+//		AnimatedDeflectionDiagram.draw(f, testSim.deflections, testSim.trajectory, testSim.slitSize);
 	}
 }

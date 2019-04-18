@@ -24,12 +24,12 @@ public class Formulas {
 	 * @param x the position on the object
 	 * @return w(x) = [qx^2(6L^2 - 4Lx + x^2) / 24EI] - [(1/6 q L^3 x) / EI]
 	 */
-	private static double deflectionYP0(FlexibleObject f, double x) {
+	private static double deflectionYP0(FlexibleObject f, double x, boolean original) {
 		double q = f.width * f.thickness * f.density * Constants.gravitationalAcceleration;
 		double L = f.length;
 		double E = f.youngsModulus;
 		double I = f.secondMomentOfInertia;
-		double additional = (-(1d / 6d) * q * Math.pow(L, 3) * x) / (E * I);
+		double additional = original?0:(-(1d / 6d) * q * Math.pow(L, 3) * x) / (E * I);
 
 		// double angleP0 = Math.atan(-(1d/6d) * q * Math.pow(L, 3));
 
@@ -62,7 +62,7 @@ public class Formulas {
 		double x = 0;
 		for (int i = 0; i <= deflectionRes; i++) {
 			double yPrev = (i == 0) ? 0 : deflectionPoints[i - 1].getY();
-			double yCoord = Formulas.deflectionYP0(f, x);
+			double yCoord = Formulas.deflectionYP0(f, x, false);
 			double yDelta = yCoord - yPrev;
 
 			// pythagoras: sqrt(bSquared=cSquared-aSquared)
@@ -299,5 +299,17 @@ public class Formulas {
 //			}
 //		}
 		return possibleCPs;
+	}
+	
+	public static double[] generateFeatureVector(FlexibleObject f) {
+		double[] featureVector = new double[5];
+		double x = 0;
+		
+		for (int i = 0; i < 5; i++) {
+			featureVector[i] = Math.abs(deflectionYP0(f, x, true)/f.length);
+			x+=f.length/4d;
+		}
+			
+		return featureVector;
 	}
 }

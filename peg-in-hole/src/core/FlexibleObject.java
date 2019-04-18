@@ -18,6 +18,7 @@ public class FlexibleObject {
 	
 	public int deflectionRes;
 	public Point2D[] deflectionP0;
+	public double[] featureVector;
 	
 	
 	public FlexibleObject(double length, double width, double thickness, double density, double youngsModulus, int deflectionRes) {
@@ -36,7 +37,9 @@ public class FlexibleObject {
 		
 		deflectionP0 = Formulas.deflectionsP0(this);
 		
-		Log.print("Created flexible object:\n" + this);
+//		Log.print("Created flexible object:\n" + this);
+		
+		this.featureVector = Formulas.generateFeatureVector(this);
 	}
 	
 	public void drawDeflectionP0() {

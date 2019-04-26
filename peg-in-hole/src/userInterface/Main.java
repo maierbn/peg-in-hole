@@ -4,6 +4,7 @@ import core.FlexibleObject;
 import core.Formulas;
 import core.Simulation;
 import javafx.geometry.Point3D;
+import sgpp.*;
 
 public class Main {
 	public static void main(String[] args) {
@@ -37,6 +38,9 @@ public class Main {
 		testSim.calcDeflectionsWithTrajectory();
 		double clearance = testSim.calcClearance();
 		System.out.println("Resulting clearance is " + clearance);
+		
+		// SG++ TESTING
+		sgpp.LoadJSGPPLib.loadJSGPPLib();
 		
 		// DIAGRAMS
 //		DeflectionDiagram.draw(f, testSim.deflections.get(testSim.deflections.size() - 1));

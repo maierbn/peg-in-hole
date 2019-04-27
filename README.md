@@ -35,6 +35,7 @@
 ---
 ### Disclaimer
 This project uses the General Sparse Grid Toolbox SG++.
+This project uses the open-source XChart library for debugging purposes, which is licensed under the Apache v2.0 License.
 
 > The software SG++ is developed by The SG++ Project which is the
 > owner of the software.

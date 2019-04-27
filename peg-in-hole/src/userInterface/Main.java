@@ -41,7 +41,7 @@ public class Main {
 		
 		// SG++ TESTING
 		sgpp.LoadJSGPPLib.loadJSGPPLib();
-		System.out.println("JSGPP library loaded");
+//		System.out.println("JSGPP library loaded");
 		
 		// DIAGRAMS
 //		DeflectionDiagram.draw(f, testSim.deflections.get(testSim.deflections.size() - 1));

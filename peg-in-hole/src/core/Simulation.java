@@ -101,12 +101,23 @@ public class Simulation {
 		int i = 1;
 		for (Point2D[] deflectionArray : deflections.subList(1, deflections.size())) {
 			
+			
+			// this gets us the first point that is already "inside"
 			int j;
 			for (j = 0; j < deflectionArray.length; j++) {
 				if (deflectionArray[j].getX() > 0) {
 					break;
 				}
 			}
+			
+			/**
+			 *  WORKAROUND: sometimes, we get an IndexOutOfBounds: -1
+			 *  It would indicate the 0th deflection point is already inside the hole
+			 *  
+			 *  in that case, we just break the outer loop; it should not affect collision
+			 *  or clearing distances
+			 */
+			if (j == 0) break;
 			
 			Point2D pointRightFromHole = deflectionArray[j];
 			Point2D pointLeftFromHole = deflectionArray[j-1];

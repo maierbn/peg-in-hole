@@ -31,7 +31,7 @@ public class Main {
 //		Point3D cp = new Point3D(-0.03, 0.01, -15.0);
 		
 		// SIMULATION RUN
-		Point3D cp = generatedCPs[(int) (Math.random()*generatedCPs.length)];
+//		Point3D cp = generatedCPs[(int) (Math.random()*generatedCPs.length)];
 //		Simulation testSim = new Simulation(f, cp, trajectoryRes, slitSize);
 //		testSim.calcTrajectory();
 ////		testSim.drawTrajectory();
@@ -43,43 +43,11 @@ public class Main {
 		sgpp.LoadJSGPPLib.loadJSGPPLib();
 //		System.out.println("JSGPP library loaded");
 		
-		/**
-		 * fill our control points into a sgpp-kde-compatible structure
-		 * which is a matrix of 8 columns and #cp rows
-		 * 
-		 * columns are cpX, cpY, cpZ, fv1, fv2, fv3, fv4, fv5, clearance
-		 * each row represents a cp-featurevector pair
-		 * 
-		 * TODO: this deserves its own function in formulas class
-		 */
-//		DataMatrix samples = new DataMatrix(0, 9);
-//		for (Point3D point3d : generatedCPs) {
-//			DataVector row = new DataVector();
-//			
-//			// simulation with cp and fv
-//			Simulation sim = new Simulation(f, point3d, trajectoryRes, slitSize);
-//			sim.calcTrajectory();
-//			sim.calcDeflectionsWithTrajectory();
-//			double clearance = sim.calcClearance();
-//			
-//			// write data to a vector
-//			row.append(point3d.getX());
-//			row.append(point3d.getY());
-//			row.append(point3d.getZ());
-//			row.append(f.featureVector[0]);
-//			row.append(f.featureVector[1]);
-//			row.append(f.featureVector[2]);
-//			row.append(f.featureVector[3]);
-//			row.append(f.featureVector[4]);
-//			row.append(clearance);
-//			
-//			// append row vector to matrix
-//			samples.appendRow(row);
-//		}
-//		
-//		samples.toFile("testControlPoints.mat");
+		// generate samples
+//		Formulas.generateSampleMatrix(generatedCPs, f, trajectoryRes, slitSize, 9, "results_successful.mat", true);
 		
-		DataMatrix samplesFromFile = DataMatrix.fromFile("results_all.mat");
+		// load sample file
+		DataMatrix samplesFromFile = DataMatrix.fromFile("results_successful.mat");
 
 	    // grid configuration
 	    RegularGridConfiguration gridConfig = new RegularGridConfiguration();
@@ -106,8 +74,8 @@ public class Main {
 		// learner - LearnerSGDEConfiguration _seems_ deprecated
 	    // superseded by crossvalidationConfigutation?  
 	    CrossvalidationForRegularizationConfiguration learnerConfig = new CrossvalidationForRegularizationConfiguration();
-	    learnerConfig.setEnable_(false);
-	    learnerConfig.setKfold_(5);
+	    learnerConfig.setEnable_(false);					// default (?)
+	    learnerConfig.setKfold_(5);							// default (?)
 	    learnerConfig.setLambdaStart_(1e-1);
 	    learnerConfig.setLambdaEnd_(1e-10);
 	    learnerConfig.setLambdaSteps_(5);
@@ -149,7 +117,8 @@ public class Main {
 		sgde.initialize(samplesFromFile);
 		
 		DataVector test = new DataVector(9);
-		samplesFromFile.getRow(0, test);
+		samplesFromFile.getRow(12, test);
+		
 		System.out.println("SGDE: PDF at #th sample: " + sgde.pdf(test));
 		
 		

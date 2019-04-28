@@ -2,6 +2,8 @@ package core;
 
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
+import sgpp.DataMatrix;
+import sgpp.DataVector;
 
 /*
  * This class contains static formulas used by other classes
@@ -311,5 +313,60 @@ public class Formulas {
 		}
 			
 		return featureVector;
+	}
+	
+	/**
+	 * creates sgpp-readable simulation samples for
+	 * controlpoint-featurevector pairs
+	 * 
+	 * @param controlpoints		array of control points
+	 * @param f					the flexible object
+	 * @param trajRes			trajectory step resolution
+	 * @param slitSize			slit size
+	 * @param dimension			datamatrix columns, default = 9
+	 * @param fileName			file name to save the data with
+	 * @param successfulOnly	discards results with collisions
+	 */
+	public static void generateSampleMatrix(
+			Point3D[] controlpoints, 
+			FlexibleObject f,
+			int trajRes,
+			double slitSize,
+			long dimension, 
+			String fileName,
+			Boolean successfulOnly) {
+		
+		DataMatrix matrix = new DataMatrix(0, dimension);
+		
+		for (Point3D point3d : controlpoints) {
+			
+			DataVector row = new DataVector();
+			
+			// simulate CP and FV pair
+			Simulation sim = new Simulation(f, point3d, trajRes, slitSize);
+			sim.calcTrajectory();
+			sim.calcDeflectionsWithTrajectory();
+			double clearance = sim.calcClearance();
+			
+			// discard failed simulations if successfulOnly is set
+			if (successfulOnly && clearance <0) {
+				continue;
+			}
+			
+			// write data to a vector
+			row.append(point3d.getX());
+			row.append(point3d.getY());
+			row.append(point3d.getZ());
+			row.append(f.featureVector[0]);
+			row.append(f.featureVector[1]);
+			row.append(f.featureVector[2]);
+			row.append(f.featureVector[3]);
+			row.append(f.featureVector[4]);
+			row.append(clearance);
+			
+			// append row vector to matrix
+			matrix.appendRow(row);
+		}
+		matrix.toFile(fileName);
 	}
 }

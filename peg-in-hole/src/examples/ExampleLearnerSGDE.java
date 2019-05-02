@@ -20,7 +20,7 @@ import java.util.Scanner;
 /**
  * Simple Java SG++ example for the SGDE learner
  */
-public class LearnerSGDE {
+public class ExampleLearnerSGDE {
 
 	public static DataMatrix readARFF(String fileNameDefined) {
 		/**

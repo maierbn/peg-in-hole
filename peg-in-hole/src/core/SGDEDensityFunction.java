@@ -12,8 +12,10 @@ public class SGDEDensityFunction extends sgpp.OptScalarFunction {
 		 * 
 		 * We have 3-dim control points and 5-dim featue vectors 
 		 * which makes for an 8-dim input?
+		 * 
+		 * optimization problem only in 3dim
 		 */
-		super(8);
+		super(3);
 	}
 	
 	/**
@@ -27,8 +29,13 @@ public class SGDEDensityFunction extends sgpp.OptScalarFunction {
 	
 	/**
 	 * evaluates the density function of estimator/learner at position x
+	 * 
+	 * only 
 	 */
 	public double eval(sgpp.DataVector x) {
+		// expects 8dim
+		// gets only 3
+		//  add original feature vector on top
 		return sgde.pdf(x);
 	}
 

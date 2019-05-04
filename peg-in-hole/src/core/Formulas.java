@@ -1,5 +1,13 @@
 package core;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
+import java.text.DecimalFormat;
+
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import sgpp.DataMatrix;
@@ -318,14 +326,16 @@ public class Formulas {
 	/**
 	 * creates sgpp-readable simulation samples for
 	 * controlpoint-featurevector pairs
+	 * clearance is negated for later optimization procedure
 	 * 
 	 * @param controlpoints		array of control points
 	 * @param f					the flexible object
 	 * @param trajRes			trajectory step resolution
 	 * @param slitSize			slit size
-	 * @param dimension			datamatrix columns, default = 9
+	 * @param dimension			datamatrix columns, default = 8 because first feature vector component is always zero
 	 * @param fileName			file name to save the data with
 	 * @param successfulOnly	discards results with collisions
+	 * @param ARFF				if true, writes an ARFF structure - matlab-compatible matrix else
 	 */
 	public static void generateSampleMatrix(
 			Point3D[] controlpoints, 
@@ -334,39 +344,90 @@ public class Formulas {
 			double slitSize,
 			long dimension, 
 			String fileName,
-			Boolean successfulOnly) {
+			Boolean successfulOnly,
+			Boolean ARFF) {
 		
 		DataMatrix matrix = new DataMatrix(0, dimension);
 		
-		for (Point3D point3d : controlpoints) {
-			
-			DataVector row = new DataVector();
-			
-			// simulate CP and FV pair
-			Simulation sim = new Simulation(f, point3d, trajRes, slitSize);
-			sim.calcTrajectory();
-			sim.calcDeflectionsWithTrajectory();
-			double clearance = sim.calcClearance();
-			
-			// discard failed simulations if successfulOnly is set
-			if (successfulOnly && clearance <0) {
-				continue;
+		try (FileWriter fstream = new FileWriter(fileName);
+				BufferedWriter info = new BufferedWriter(fstream)) {
+			// write header
+			if (ARFF) {
+				info.write("@RELATION \"peg_in_hole_clearance\"\n");
+				info.write("\n");
+				info.write("@ATTRIBUTE cp0 NUMERIC\n");
+				info.write("@ATTRIBUTE cp1 NUMERIC\n");
+				info.write("@ATTRIBUTE cp2 NUMERIC\n");
+//				info.write("@ATTRIBUTE fv0 NUMERIC\n");
+				info.write("@ATTRIBUTE fv1 NUMERIC\n");
+				info.write("@ATTRIBUTE fv2 NUMERIC\n");
+				info.write("@ATTRIBUTE fv3 NUMERIC\n");
+				info.write("@ATTRIBUTE fv4 NUMERIC\n");
+				info.write("@ATTRIBUTE clearance NUMERIC\n");
+				info.write("\n");
+				info.write("@DATA\n");
 			}
 			
-			// write data to a vector
-			row.append(point3d.getX());
-			row.append(point3d.getY());
-			row.append(point3d.getZ());
-			row.append(f.featureVector[0]);
-			row.append(f.featureVector[1]);
-			row.append(f.featureVector[2]);
-			row.append(f.featureVector[3]);
-			row.append(f.featureVector[4]);
-			row.append(clearance);
-			
-			// append row vector to matrix
-			matrix.appendRow(row);
+			for (Point3D point3d : controlpoints) {
+				
+				DataVector row = new DataVector();
+				
+				// simulate CP and FV pair
+				Simulation sim = new Simulation(f, point3d, trajRes, slitSize);
+				sim.calcTrajectory();
+				sim.calcDeflectionsWithTrajectory();
+				double clearance = sim.calcClearance();
+				
+				// discard failed simulations if successfulOnly is set
+				if (successfulOnly && clearance <0) {
+					continue;
+				}
+				
+				// write data to a vector
+				row.append(point3d.getX());
+				row.append(point3d.getY());
+				row.append(point3d.getZ());
+//				row.append(f.featureVector[0]);
+				row.append(f.featureVector[1]);
+				row.append(f.featureVector[2]);
+				row.append(f.featureVector[3]);
+				row.append(f.featureVector[4]);
+				row.append(-clearance);
+				
+				// append row vector to matrix
+				matrix.appendRow(row);
+				
+				if (ARFF) {
+//					DecimalFormat format = new DecimalFormat("#.############");
+//					info.write(format.format(point3d.getX())+",");
+//					info.write(format.format(point3d.getY())+",");
+//					info.write(format.format(point3d.getZ())+",");
+////					info.write(format.format(f.featureVector[0])+",");
+//					info.write(format.format(f.featureVector[1])+",");
+//					info.write(format.format(f.featureVector[2])+",");
+//					info.write(format.format(f.featureVector[3])+",");
+//					info.write(format.format(f.featureVector[4])+",");
+//					info.write(format.format(clearance)+"\n");
+					
+					int scale = 12;
+					info.write(BigDecimal.valueOf(point3d.getX()).setScale(scale, BigDecimal.ROUND_HALF_UP)+",");
+					info.write(BigDecimal.valueOf(point3d.getY()).setScale(scale, BigDecimal.ROUND_HALF_UP)+",");
+					info.write(BigDecimal.valueOf(point3d.getZ()).setScale(scale, BigDecimal.ROUND_HALF_UP)+",");
+					info.write(BigDecimal.valueOf(f.featureVector[1]).setScale(scale, BigDecimal.ROUND_HALF_UP)+",");
+					info.write(BigDecimal.valueOf(f.featureVector[2]).setScale(scale, BigDecimal.ROUND_HALF_UP)+",");
+					info.write(BigDecimal.valueOf(f.featureVector[3]).setScale(scale, BigDecimal.ROUND_HALF_UP)+",");
+					info.write(BigDecimal.valueOf(f.featureVector[4]).setScale(scale, BigDecimal.ROUND_HALF_UP)+",");
+					info.write(BigDecimal.valueOf(-clearance).setScale(scale, BigDecimal.ROUND_HALF_UP)+"\n");
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		matrix.toFile(fileName);
+		
+		// if we want a matrix, we use native method
+		if (!ARFF) {
+			matrix.toFile(fileName);
+			     
+		}		
 	}
 }

@@ -111,7 +111,7 @@ int main(int argc, const char* argv[]) {
   sgpp::base::RegularGridConfiguration gridConfig;
   gridConfig.dim_ = dataset.getDimension();
   gridConfig.level_ = 3;
-  gridConfig.type_ = sgpp::base::GridType::Linear; //TODO: Should be b splines!
+  gridConfig.type_ = sgpp::base::GridType::Linear; //TODO: BSplines not available, but does not matter
   //  gridConfig.filename_ = "/tmp/sgde-grid-4391dc6e-54cd-4ca2-9510-a9c02a2889ec.grid";
 
   /**
@@ -177,7 +177,8 @@ int main(int argc, const char* argv[]) {
    */
   sgpp::datadriven::KernelDensityEstimator kde(samples);
   sgpp::base::DataVector x(learner.getDim());
-  samples.getRow(samples.getNrows()/2, x);
+  // samples.getRow(samples.getNrows()/2, x);
+  samples.getRow(1, x);
   
   std::cout << "--------------------------------------------------------\n";
   std::cout << "x= " << x.toString() << "\n";
@@ -199,10 +200,10 @@ int main(int argc, const char* argv[]) {
   // objective function
   ExampleFunction f(learner);
   sgpp::base::DataVector testFV;
-  testFV.append(0.079323046875);
-  testFV.append(0.266368750000);
-  testFV.append(0.502379296875);
-  testFV.append(0.752100000000);
+  testFV.append(samples.get(0,3));
+  testFV.append(samples.get(0,4));
+  testFV.append(samples.get(0,5));
+  testFV.append(samples.get(0,6));
 
   f.setParamters(testFV);
   // dimension of domain
@@ -280,12 +281,22 @@ int main(int argc, const char* argv[]) {
                       std::min_element(functionValues.getPointer(),
                                        functionValues.getPointer() + functionValues.getSize()));
 
-    x0 = gridStorage.getCoordinates(gridStorage[x0Index]);
+    //x0 = gridStorage.getCoordinates(gridStorage[x0Index]);
+
+    //x0.set(0, 0.399712630494);
+    //x0.set(1, 0.010028000000);
+    //x0.set(2, 0.547298970951);
+
+    x0.set(0, samples.get(0,0));
+    x0.set(1, samples.get(0,1));
+    x0.set(2, samples.get(0,2));
+
 
     fX0 = functionValues[x0Index];
     ftX0 = ft.eval(x0);
   }
 
+  std::cout << "Gradient starting point:\n";
   std::cout << "x0 = " << x0.toString() << "\n";
   std::cout << "f(x0) = " << fX0 << ", ft(x0) = " << ftX0 << "\n\n";
 
@@ -298,28 +309,11 @@ int main(int argc, const char* argv[]) {
   const double ftXOpt = gradientDescent.getOptimalValue();
   const double fXOpt = f.eval(xOpt);
 
-  std::cout << "\nxOpt = " << xOpt.toString() << "\n";
+  std::cout << "\noptimal control point:\n";
+  std::cout << "for feature vector" << testFV.toString() << "\n";
+  std::cout << "xOpt = " << xOpt.toString() << "\n";
   std::cout << "f(xOpt) = " << fXOpt << ", ft(xOpt) = " << ftXOpt << "\n\n";
-
-  /**
-   * For comparison, we apply the classical gradient-free Nelder-Mead method
-   * directly to the objective function \f$f\f$.
-   */
-  printLine();
-  std::cout << "Optimizing objective function (for comparison)...\n\n";
-
-  sgpp::optimization::optimizer::NelderMead nelderMead(f, 1000);
-  nelderMead.optimize();
-  sgpp::base::DataVector xOptNM = nelderMead.getOptimalPoint();
-  const double fXOptNM = nelderMead.getOptimalValue();
-  const double ftXOptNM = ft.eval(xOptNM);
-
-  std::cout << "\nnxOptNM = " << xOptNM.toString() << "\n";
-  std::cout << "f(xOptNM) = " << fXOptNM << ", ft(xOptNM) = " << ftXOptNM << "\n\n";
-
-  printLine();
-  std::cout << "\nsgpp::optimization example program terminated.\n";
-
+  
   return 0;
 }
 

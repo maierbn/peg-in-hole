@@ -95,7 +95,7 @@ int main(int argc, const char* argv[]) {
   (void)argc;
   (void)argv;
 
-  std::string filename = "./results_successful.arff";
+  std::string filename = "./t.arff";
 
   std::cout << "# loading file: " << filename << std::endl;
   sgpp::datadriven::Dataset dataset =
@@ -283,11 +283,7 @@ int main(int argc, const char* argv[]) {
 
     //x0 = gridStorage.getCoordinates(gridStorage[x0Index]);
 
-    //x0.set(0, 0.399712630494);
-    //x0.set(1, 0.010028000000);
-    //x0.set(2, 0.547298970951);
-
-    x0.set(0, samples.get(0,0));
+    x0.set(0, samples.get(0,0)/2);
     x0.set(1, samples.get(0,1));
     x0.set(2, samples.get(0,2));
 

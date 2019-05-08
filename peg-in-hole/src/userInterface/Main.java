@@ -4,11 +4,10 @@ import core.FlexibleObject;
 import core.Formulas;
 import core.Simulation;
 import javafx.geometry.Point3D;
-import sgpp.*;
 
 public class Main {
 	public static void main(String[] args) {
-		double length = 0.040; // meter
+		double length = 0.080; // meter
 		double width = 0.015; // meter
 		double thickness = 0.002; // meter
 		double density = 1150;
@@ -27,106 +26,21 @@ public class Main {
 		FlexibleObject f = new FlexibleObject(length, width, thickness, density, youngsModulus, deflectionRes);
 
 		// CONTROL POINTS
-		Point3D[] generatedCPs = Formulas.generateCPs(f, 5);
-//		Point3D cp = new Point3D(-0.03, 0.01, -15.0);
+		Point3D[] generatedCPs = Formulas.generateCPs(f, 40);
+		System.out.println("Generated a total of " + generatedCPs.length + " control points");
+		Formulas.generateSampleMatrix(generatedCPs, f, trajectoryRes, slitSize, 8, "results_successful.arff", true, true);
+		
+		
+		Point3D cp = new Point3D(2.97567275825991239824e-001*-1*0.1,
+				2.98237271554092494668e-010*0.1,
+				6.11962449156885246460e-001*20);
 		
 		// SIMULATION RUN
-//		Point3D cp = generatedCPs[(int) (Math.random()*generatedCPs.length)];
-//		Simulation testSim = new Simulation(f, cp, trajectoryRes, slitSize);
-//		testSim.calcTrajectory();
-////		testSim.drawTrajectory();
-//		testSim.calcDeflectionsWithTrajectory();
-//		double clearance = testSim.calcClearance();
-//		System.out.println("Resulting clearance is " + clearance);
-		
-		// SG++ TESTING
-		sgpp.LoadJSGPPLib.loadJSGPPLib();
-//		System.out.println("JSGPP library loaded");
-		
-		// generate samples
-//		Formulas.generateSampleMatrix(generatedCPs, f, trajectoryRes, slitSize, 9, "results_successful.mat", true);
-		
-		// load sample file
-		DataMatrix samplesFromFile = DataMatrix.fromFile("results_successful.mat");
-
-	    // grid configuration
-	    RegularGridConfiguration gridConfig = new RegularGridConfiguration();
-	    gridConfig.setDim_(samplesFromFile.getNcols());		// sets dimensions, conveniently from sample. probably too big to compute.
-	    gridConfig.setLevel_(4);							// discretization resolution ???
-	    gridConfig.setType_(GridType.Linear);				// TODO: BSpline as per project description
-		
-	    // adaptive refinement 
-	    AdaptivityConfiguration adaptConfig = new AdaptivityConfiguration();
-	    adaptConfig.setNoPoints_(5);						// max. number of points to be refined (?)
-	    adaptConfig.setNumRefinements_(0);					// number of refinements (?)
-	    
-	    // solver
-	    SLESolverConfiguration solverConfig = new SLESolverConfiguration();
-	    solverConfig.setType_(SLESolverType.CG);			// CG, BiCGSTAB or FISTA (?)
-	    solverConfig.setMaxIterations_(100);				// (?)
-	    solverConfig.setEps_(1e-10);						// (?)
-	    solverConfig.setThreshold_(1e-10);					// (?)
-	    
-	    // regularization
-	    RegularizationConfiguration regularizationConfig = new RegularizationConfiguration();
-	    regularizationConfig.setType_(RegularizationType.Laplace);	// Identity, Laplace, Diagonal, Lasso, ElasticNet, GroupLasso
-		
-		// learner - LearnerSGDEConfiguration _seems_ deprecated
-	    // superseded by crossvalidationConfigutation?  
-	    CrossvalidationForRegularizationConfiguration learnerConfig = new CrossvalidationForRegularizationConfiguration();
-	    learnerConfig.setEnable_(false);					// default (?)
-	    learnerConfig.setKfold_(5);							// default (?)
-	    learnerConfig.setLambdaStart_(1e-1);
-	    learnerConfig.setLambdaEnd_(1e-10);
-	    learnerConfig.setLambdaSteps_(5);
-	    learnerConfig.setLogScale_(true);
-	    learnerConfig.setShuffle_(true);
-	    learnerConfig.setSeed_(1234567);
-	    learnerConfig.setSilent_(false);
-	    
-	    // init and run
-	    /**
-	     * the following looks like a bug in the java bindings. elaboration:
-	     * 
-	     * 		In the process of wrapping a native library in C++ to Java, 
-	     * 		I've come across the SWIGTYPE_p_ classes. Reading around the SWIG docs, 
-	     * 		and following the answer from here I more or less understand that SWIG 
-	     * 		generates these classes when it doesn't know what to do with a C++ data
-	     * 		type. It tries to create a pointer to the data type, but these SWIGTYPE
-	     * 		classes seem to be functionally useless.
-	     * 
-	     * the constructor expects a swigtype_p =(
-	     */
-//	    LearnerSGDE learner = new LearnerSGDE(gridConfig, adaptConfig,solverConfig,regularizationConfig, (SWIGTYPE_p_CrossvalidationConfiguration) learnerConfig);
-	    
-	    // looks like the following constructor reads the config from a json.
-//	    LearnerSGDE learner = new LearnerSGDE(new LearnerSGDEConfiguration("filename"));
-//	    learner.initialize(samplesFromFile);
-		
-	    // OR
-	    SGDEConfiguration sgdeconfig = new SGDEConfiguration();		// what to configure?
-	    
-	    SparseGridDensityEstimator sgde = new SparseGridDensityEstimator(
-	    		gridConfig, 
-	    		adaptConfig, 
-	    		solverConfig, 
-	    		regularizationConfig, 
-	    		learnerConfig, 
-	    		sgdeconfig);
-	    
-		sgde.initialize(samplesFromFile);
-		
-		DataVector test = new DataVector(9);
-		samplesFromFile.getRow(12, test);
-		
-		System.out.println("SGDE: PDF at #th sample: " + sgde.pdf(test));
-		
-		
-		// DIAGRAMS
-//		DeflectionDiagram.draw(f, testSim.deflections.get(testSim.deflections.size() - 1));
-//		f.drawDeflectionP0();
-//		DeflectionDiagram.draw(f, testSim.deflections.get(1));
-//		DeflectionDiagram.draw(f, testSim.deflections.get(2));
-//		AnimatedDeflectionDiagram.draw(f, testSim.deflections, testSim.trajectory, testSim.slitSize);
+		Simulation testSim = new Simulation(f, cp, trajectoryRes, slitSize);
+		testSim.calcTrajectory();
+		testSim.calcDeflectionsWithTrajectory();
+		double clearance = testSim.calcClearance();
+		System.out.println("Resulting clearance is " + clearance);
+		AnimatedDeflectionDiagram.draw(f, testSim.deflections, testSim.trajectory, testSim.slitSize);
 	}
 }

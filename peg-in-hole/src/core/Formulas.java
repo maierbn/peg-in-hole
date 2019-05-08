@@ -347,8 +347,8 @@ public class Formulas {
 			Boolean successfulOnly,
 			Boolean ARFF) {
 		
-		DataMatrix matrix = new DataMatrix(0, dimension);
-		
+//		DataMatrix matrix = new DataMatrix(0, dimension);
+		int countWritten = 0;
 		try (FileWriter fstream = new FileWriter(fileName);
 				BufferedWriter info = new BufferedWriter(fstream)) {
 			// write header
@@ -370,7 +370,7 @@ public class Formulas {
 			
 			for (Point3D point3d : controlpoints) {
 				
-				DataVector row = new DataVector();
+//				DataVector row = new DataVector();
 				
 				// simulate CP and FV pair
 				Simulation sim = new Simulation(f, point3d, trajRes, slitSize);
@@ -383,19 +383,19 @@ public class Formulas {
 					continue;
 				}
 				
-				// write data to a vector
-				row.append(point3d.getX());
-				row.append(point3d.getY());
-				row.append(point3d.getZ());
-//				row.append(f.featureVector[0]);
-				row.append(f.featureVector[1]);
-				row.append(f.featureVector[2]);
-				row.append(f.featureVector[3]);
-				row.append(f.featureVector[4]);
-				row.append(-clearance);
+//				// write data to a vector
+//				row.append(Math.abs(point3d.getX())/f.length);
+//				row.append(point3d.getY()/f.length);
+//				row.append(point3d.getZ()/10);
+////				row.append(f.featureVector[0]);
+//				row.append(f.featureVector[1]*10);
+//				row.append(f.featureVector[2]*10);
+//				row.append(f.featureVector[3]*10);
+//				row.append(f.featureVector[4]*10);
+//				row.append(-clearance*1000);
 				
-				// append row vector to matrix
-				matrix.appendRow(row);
+//				// append row vector to matrix
+//				matrix.appendRow(row);
 				
 				if (ARFF) {
 //					DecimalFormat format = new DecimalFormat("#.############");
@@ -410,23 +410,26 @@ public class Formulas {
 //					info.write(format.format(clearance)+"\n");
 					
 					int scale = 12;
-					info.write(BigDecimal.valueOf(point3d.getX()).setScale(scale, BigDecimal.ROUND_HALF_UP)+",");
-					info.write(BigDecimal.valueOf(point3d.getY()).setScale(scale, BigDecimal.ROUND_HALF_UP)+",");
-					info.write(BigDecimal.valueOf(point3d.getZ()).setScale(scale, BigDecimal.ROUND_HALF_UP)+",");
+					info.write(BigDecimal.valueOf(Math.abs(point3d.getX())*10).setScale(scale, BigDecimal.ROUND_HALF_UP)+",");
+					info.write(BigDecimal.valueOf(point3d.getY()*10).setScale(scale, BigDecimal.ROUND_HALF_UP)+",");
+					info.write(BigDecimal.valueOf(point3d.getZ()/20).setScale(scale, BigDecimal.ROUND_HALF_UP)+",");
 					info.write(BigDecimal.valueOf(f.featureVector[1]).setScale(scale, BigDecimal.ROUND_HALF_UP)+",");
 					info.write(BigDecimal.valueOf(f.featureVector[2]).setScale(scale, BigDecimal.ROUND_HALF_UP)+",");
 					info.write(BigDecimal.valueOf(f.featureVector[3]).setScale(scale, BigDecimal.ROUND_HALF_UP)+",");
 					info.write(BigDecimal.valueOf(f.featureVector[4]).setScale(scale, BigDecimal.ROUND_HALF_UP)+",");
-					info.write(BigDecimal.valueOf(-clearance).setScale(scale, BigDecimal.ROUND_HALF_UP)+"\n");
+					info.write(BigDecimal.valueOf(clearance*1000).setScale(scale, BigDecimal.ROUND_HALF_UP)+"\n");
+					
+					countWritten+=1;
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
+		System.out.println("Written a total of " + countWritten + " simulation results to file");
 		// if we want a matrix, we use native method
 		if (!ARFF) {
-			matrix.toFile(fileName);
+//			matrix.toFile(fileName);
 			     
 		}		
 	}

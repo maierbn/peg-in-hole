@@ -104,7 +104,7 @@ public class Simulation {
 			
 			// this gets us the first point that is already "inside"
 			int j;
-			for (j = 0; j < deflectionArray.length; j++) {
+			for (j = 0; j < deflectionArray.length-1; j++) {
 				if (deflectionArray[j].getX() > 0) {
 					break;
 				}
@@ -136,7 +136,7 @@ public class Simulation {
 			// box has been placed in the slit and rotated accordingly 
 			
 			if (box.intersects(upperSlitBoundingBox) || box.intersects(lowerSlitBoundingBox)) {
-				System.out.println("Collision occured in step " + i);
+//				System.out.println("Collision occured in step " + i);
 				return -1;
 			}
 			
@@ -162,6 +162,7 @@ public class Simulation {
 			
 			i++;
 		}
+//		return (minimalClearance < Double.MAX_VALUE)?minimalClearance:-1;
 		return minimalClearance;
 	}
 }

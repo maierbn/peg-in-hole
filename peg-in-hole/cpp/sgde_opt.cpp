@@ -67,10 +67,16 @@ class ExampleFunction : public sgpp::optimization::ScalarFunction {
 
         sgpp::base::DataVector xNew(x);
 
+        //xNew.append(featureVector.get(0));
+        //xNew.append(featureVector.get(1));
+        //xNew.append(featureVector.get(2));
+        //xNew.append(featureVector.get(3));
+
         xNew.append(featureVector.get(0));
         xNew.append(featureVector.get(1));
         xNew.append(featureVector.get(2));
         xNew.append(featureVector.get(3));
+
         return learner.pdf(xNew);
   }
 
@@ -94,6 +100,11 @@ void printLine() {
 int main(int argc, const char* argv[]) {
   (void)argc;
   (void)argv;
+
+  double featureVectorCoeff_0 = atof(argv[1]);
+  double featureVectorCoeff_1 = atof(argv[2]);
+  double featureVectorCoeff_2 = atof(argv[3]);
+  double featureVectorCoeff_3 = atof(argv[4]);
 
   std::string filename = "./t.arff";
 
@@ -200,10 +211,10 @@ int main(int argc, const char* argv[]) {
   // objective function
   ExampleFunction f(learner);
   sgpp::base::DataVector testFV;
-  testFV.append(samples.get(0,3));
-  testFV.append(samples.get(0,4));
-  testFV.append(samples.get(0,5));
-  testFV.append(samples.get(0,6));
+  testFV.append(featureVectorCoeff_0);
+  testFV.append(featureVectorCoeff_1);
+  testFV.append(featureVectorCoeff_2);
+  testFV.append(featureVectorCoeff_3);
 
   f.setParamters(testFV);
   // dimension of domain

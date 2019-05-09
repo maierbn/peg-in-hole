@@ -3,8 +3,8 @@ package userInterface;
 import java.io.FileInputStream;
 import java.util.Properties;
 
+import core.ControlPoints;
 import core.FlexibleObject;
-import core.Formulas;
 import core.Simulation;
 import javafx.geometry.Point3D;
 
@@ -38,11 +38,14 @@ public class Main {
 
 			// CONTROL POINTS
 			if (generateDatabase) {
-				int amountOfSamples = Integer.parseInt(p.getProperty("amountOfSamples"));
-				Point3D[] generatedCPs = Formulas.generateCPs(f, amountOfSamples);
-				System.out.println("Generated a total of " + generatedCPs.length + " control points");
-				Simulation.generateSampleMatrix(generatedCPs, f, trajectoryRes, slitSize, 8, "results_successful.arff",
-						true, true);
+				int granularity = Integer.parseInt(p.getProperty("granularity"));
+				
+				ControlPoints controlPoints = new ControlPoints(f, granularity);
+				controlPoints.generateCPs();
+				controlPoints.simulateAllCPs(trajectoryRes, slitSize);
+
+				System.out.println("Generated a total of " + controlPoints.amount + " control points");
+				controlPoints.writeARFF(8, "results_successful.arff", true);
 			}
 			// SIMULATION RUN
 

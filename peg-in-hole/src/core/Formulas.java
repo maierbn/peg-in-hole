@@ -1,17 +1,7 @@
 package core;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
-import java.text.DecimalFormat;
-
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
-import sgpp.DataMatrix;
-import sgpp.DataVector;
 
 /*
  * This class contains static formulas used by other classes
@@ -323,114 +313,5 @@ public class Formulas {
 		return featureVector;
 	}
 	
-	/**
-	 * creates sgpp-readable simulation samples for
-	 * controlpoint-featurevector pairs
-	 * clearance is negated for later optimization procedure
-	 * 
-	 * @param controlpoints		array of control points
-	 * @param f					the flexible object
-	 * @param trajRes			trajectory step resolution
-	 * @param slitSize			slit size
-	 * @param dimension			datamatrix columns, default = 8 because first feature vector component is always zero
-	 * @param fileName			file name to save the data with
-	 * @param successfulOnly	discards results with collisions
-	 * @param ARFF				if true, writes an ARFF structure - matlab-compatible matrix else
-	 */
-	public static void generateSampleMatrix(
-			Point3D[] controlpoints, 
-			FlexibleObject f,
-			int trajRes,
-			double slitSize,
-			long dimension, 
-			String fileName,
-			Boolean successfulOnly,
-			Boolean ARFF) {
-		
-//		DataMatrix matrix = new DataMatrix(0, dimension);
-		int countWritten = 0;
-		try (FileWriter fstream = new FileWriter(fileName);
-				BufferedWriter info = new BufferedWriter(fstream)) {
-			// write header
-			if (ARFF) {
-				info.write("@RELATION \"peg_in_hole_clearance\"\n");
-				info.write("\n");
-				info.write("@ATTRIBUTE cp0 NUMERIC\n");
-				info.write("@ATTRIBUTE cp1 NUMERIC\n");
-				info.write("@ATTRIBUTE cp2 NUMERIC\n");
-//				info.write("@ATTRIBUTE fv0 NUMERIC\n");
-				info.write("@ATTRIBUTE fv1 NUMERIC\n");
-				info.write("@ATTRIBUTE fv2 NUMERIC\n");
-				info.write("@ATTRIBUTE fv3 NUMERIC\n");
-				info.write("@ATTRIBUTE fv4 NUMERIC\n");
-				info.write("@ATTRIBUTE clearance NUMERIC\n");
-				info.write("\n");
-				info.write("@DATA\n");
-			}
-			
-			for (Point3D point3d : controlpoints) {
-				
-//				DataVector row = new DataVector();
-				
-				// simulate CP and FV pair
-				Simulation sim = new Simulation(f, point3d, trajRes, slitSize);
-				sim.calcTrajectory();
-				sim.calcDeflectionsWithTrajectory();
-				double clearance = sim.calcClearance();
-				
-				// discard failed simulations if successfulOnly is set
-				if (successfulOnly && clearance <0) {
-					continue;
-				}
-				
-//				// write data to a vector
-//				row.append(Math.abs(point3d.getX())/f.length);
-//				row.append(point3d.getY()/f.length);
-//				row.append(point3d.getZ()/10);
-////				row.append(f.featureVector[0]);
-//				row.append(f.featureVector[1]*10);
-//				row.append(f.featureVector[2]*10);
-//				row.append(f.featureVector[3]*10);
-//				row.append(f.featureVector[4]*10);
-//				row.append(-clearance*1000);
-				
-//				// append row vector to matrix
-//				matrix.appendRow(row);
-				
-				if (ARFF) {
-//					DecimalFormat format = new DecimalFormat("#.############");
-//					info.write(format.format(point3d.getX())+",");
-//					info.write(format.format(point3d.getY())+",");
-//					info.write(format.format(point3d.getZ())+",");
-////					info.write(format.format(f.featureVector[0])+",");
-//					info.write(format.format(f.featureVector[1])+",");
-//					info.write(format.format(f.featureVector[2])+",");
-//					info.write(format.format(f.featureVector[3])+",");
-//					info.write(format.format(f.featureVector[4])+",");
-//					info.write(format.format(clearance)+"\n");
-					
-					int scale = 12;
-					info.write(BigDecimal.valueOf(Math.abs(point3d.getX())*10).setScale(scale, BigDecimal.ROUND_HALF_UP)+",");
-					info.write(BigDecimal.valueOf(point3d.getY()*10).setScale(scale, BigDecimal.ROUND_HALF_UP)+",");
-					info.write(BigDecimal.valueOf(point3d.getZ()/20).setScale(scale, BigDecimal.ROUND_HALF_UP)+",");
-					info.write(BigDecimal.valueOf(f.featureVector[1]).setScale(scale, BigDecimal.ROUND_HALF_UP)+",");
-					info.write(BigDecimal.valueOf(f.featureVector[2]).setScale(scale, BigDecimal.ROUND_HALF_UP)+",");
-					info.write(BigDecimal.valueOf(f.featureVector[3]).setScale(scale, BigDecimal.ROUND_HALF_UP)+",");
-					info.write(BigDecimal.valueOf(f.featureVector[4]).setScale(scale, BigDecimal.ROUND_HALF_UP)+",");
-					info.write(BigDecimal.valueOf(clearance*1000).setScale(scale, BigDecimal.ROUND_HALF_UP)+"\n");
-					
-					countWritten+=1;
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		System.out.println("Written a total of " + countWritten + " simulation results to file");
-		// if we want a matrix, we use native method
-		if (!ARFF) {
-//			matrix.toFile(fileName);
-			     
-		}		
-	}
+	
 }

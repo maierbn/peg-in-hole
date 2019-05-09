@@ -41,7 +41,7 @@ public class Main {
 				int amountOfSamples = Integer.parseInt(p.getProperty("amountOfSamples"));
 				Point3D[] generatedCPs = Formulas.generateCPs(f, amountOfSamples);
 				System.out.println("Generated a total of " + generatedCPs.length + " control points");
-				Formulas.generateSampleMatrix(generatedCPs, f, trajectoryRes, slitSize, 8, "results_successful.arff",
+				Simulation.generateSampleMatrix(generatedCPs, f, trajectoryRes, slitSize, 8, "results_successful.arff",
 						true, true);
 			}
 			// SIMULATION RUN
@@ -58,7 +58,7 @@ public class Main {
 				testSim.calcDeflectionsWithTrajectory();
 				double clearance = testSim.calcClearance();
 				System.out.println("Resulting clearance is " + clearance);
-				AnimatedDeflectionDiagram.draw(f, testSim.deflections, testSim.trajectory, testSim.slitSize);
+				AnimatedDeflectionDiagram.draw(f, testSim.deflections, testSim.trajectory, testSim.slitSize, testSim.cp);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

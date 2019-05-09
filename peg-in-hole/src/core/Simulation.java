@@ -1,14 +1,15 @@
 package core;
 
 import java.awt.geom.*;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Translate;
 import userInterface.TrajectoryDiagram;
 
 public class Simulation {
@@ -98,7 +99,6 @@ public class Simulation {
 		 * we use .sublist(1, .size()) to remove the first (read: initial) deflection
 		 * it would skew the min distance
 		 */
-		int i = 1;
 		for (Point2D[] deflectionArray : deflections.subList(1, deflections.size())) {
 			
 			
@@ -159,10 +159,92 @@ public class Simulation {
 			if (clearance < minimalClearance) {
 				minimalClearance = clearance;
 			}
-			
-			i++;
 		}
 //		return (minimalClearance < Double.MAX_VALUE)?minimalClearance:-1;
 		return minimalClearance;
+	}
+	
+	/**
+	 * creates sgpp-readable simulation samples for
+	 * controlpoint-featurevector pairs
+	 * clearance is negated for later optimization procedure
+	 * 
+	 * @param controlpoints		array of control points
+	 * @param f					the flexible object
+	 * @param trajRes			trajectory step resolution
+	 * @param slitSize			slit size
+	 * @param dimension			datamatrix columns, default = 8 because first feature vector component is always zero
+	 * @param fileName			file name to save the data with
+	 * @param successfulOnly	discards results with collisions
+	 * @param ARFF				if true, writes an ARFF structure - matlab-compatible matrix else
+	 */
+	public static void generateSampleMatrix(
+			Point3D[] controlpoints, 
+			FlexibleObject f,
+			int trajRes,
+			double slitSize,
+			long dimension, 
+			String fileName,
+			Boolean successfulOnly,
+			Boolean ARFF) {
+		
+//		DataMatrix matrix = new DataMatrix(0, dimension);
+		int countWritten = 0;
+		try (FileWriter fstream = new FileWriter(fileName);
+				BufferedWriter info = new BufferedWriter(fstream)) {
+			// write header
+			if (ARFF) {
+				info.write("@RELATION \"peg_in_hole_clearance\"\n");
+				info.write("\n");
+				info.write("@ATTRIBUTE cp0 NUMERIC\n");
+				info.write("@ATTRIBUTE cp1 NUMERIC\n");
+				info.write("@ATTRIBUTE cp2 NUMERIC\n");
+//				don't write fv0 because its always 0
+				info.write("@ATTRIBUTE fv1 NUMERIC\n");
+				info.write("@ATTRIBUTE fv2 NUMERIC\n");
+				info.write("@ATTRIBUTE fv3 NUMERIC\n");
+				info.write("@ATTRIBUTE fv4 NUMERIC\n");
+				info.write("@ATTRIBUTE clearance NUMERIC\n");
+				info.write("\n");
+				info.write("@DATA\n");
+			}
+			
+			for (Point3D point3d : controlpoints) {		
+				// simulate CP and FV pair
+				Simulation sim = new Simulation(f, point3d, trajRes, slitSize);
+				sim.calcTrajectory();
+				sim.calcDeflectionsWithTrajectory();
+				double clearance = sim.calcClearance();
+				
+				// discard failed simulations if successfulOnly is set
+				if (successfulOnly && clearance <0) {
+					continue;
+				}
+				
+				if (ARFF) {
+					int scale = 12;
+					info.write(BigDecimal.valueOf(Math.abs(point3d.getX())*10).setScale(scale, BigDecimal.ROUND_HALF_UP)+",");
+					info.write(BigDecimal.valueOf(point3d.getY()*10).setScale(scale, BigDecimal.ROUND_HALF_UP)+",");
+					info.write(BigDecimal.valueOf(point3d.getZ()/20).setScale(scale, BigDecimal.ROUND_HALF_UP)+",");
+//					don't write fv0 because its always 0
+					info.write(BigDecimal.valueOf(f.featureVector[1]).setScale(scale, BigDecimal.ROUND_HALF_UP)+",");
+					info.write(BigDecimal.valueOf(f.featureVector[2]).setScale(scale, BigDecimal.ROUND_HALF_UP)+",");
+					info.write(BigDecimal.valueOf(f.featureVector[3]).setScale(scale, BigDecimal.ROUND_HALF_UP)+",");
+					info.write(BigDecimal.valueOf(f.featureVector[4]).setScale(scale, BigDecimal.ROUND_HALF_UP)+",");
+					info.write(BigDecimal.valueOf(clearance*1000).setScale(scale, BigDecimal.ROUND_HALF_UP)+"\n");
+					
+					countWritten+=1;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		System.out.println("Written a total of " + countWritten + " simulation results to file");
+		// if we want a matrix, we use native method
+		if (!ARFF) {
+//			matrix.toFile(fileName);
+			     
+		}		
 	}
 }

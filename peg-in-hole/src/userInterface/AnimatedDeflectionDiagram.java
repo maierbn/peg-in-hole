@@ -30,7 +30,7 @@ public class AnimatedDeflectionDiagram {
 	
 	public static void draw(FlexibleObject f, 
 							ArrayList<Point2D[]> deflections,
-							Point3D[] trajectory, double slitSize) {
+							Point3D[] trajectory, double slitSize, Point3D cp) {
 		// bounding boxes
 		BoundingBox upperSlitBoundingBox = new BoundingBox(0, slitSize/2, 0, f.length);
 		BoundingBox lowerSlitBoundingBox = new BoundingBox(0, -((slitSize/2)+f.length), 0, f.length);
@@ -57,10 +57,14 @@ public class AnimatedDeflectionDiagram {
 		
 		
 		// initially fill render data with values at P0
-		double[] xData = deflectionRenderData(f, deflections.get(0))[0];
-		double[] yData = deflectionRenderData(f, deflections.get(0))[1];
+		//double[] xData = deflectionRenderData(f, deflections.get(0))[0];
+		//double[] yData = deflectionRenderData(f, deflections.get(0))[1];
 		double[] xDataProj = trajectoryRenderData(trajectory)[0];
 		double[] yDataProj = trajectoryRenderData(trajectory)[1];
+		
+		double[] xData = deflectionRenderData(f, deflections.get(0))[0];
+		double[] yDataUpper = deflectionRenderData(f, deflections.get(0))[1];
+		double[] yDataLower = deflectionRenderData(f, deflections.get(0))[2];
 
 		// create chart object
 		XYChart chart = new XYChartBuilder()
@@ -70,24 +74,31 @@ public class AnimatedDeflectionDiagram {
 				.xAxisTitle("x in m, real world")
 				.yAxisTitle("x in m, real world")
 				.build();
+		
+		XYSeries cpPlot = chart
+				.addSeries(
+						"Controlpoint cp", 
+						new double[] {cp.getX()},
+						new double[] {cp.getY()});
+
 		XYSeries deflectionSeriesUpper = chart.addSeries(
 				"Deflection of flexible Object, upper, w(x)", 
 				xData, 
-				yData);
+				yDataUpper);
 		XYSeries deflectionSeriesLower = chart.addSeries(
 				"Deflection of flexible Object, lower, w(x)", 
 				xData, 
-				yData);
+				yDataLower);
 		XYSeries trajectorySeries = chart.addSeries(
 				"Trajectory of the arm, B(t)", 
 				xDataProj, 
 				yDataProj);
 		XYSeries upperBoxSeries = chart.addSeries(
-				"upper bounding box", 
+				"Upper slit-boundingbox", 
 				drawUpperBoundingBoxX,
 				drawUpperBoundingBoxY);
 		XYSeries lowerBoxSeries = chart.addSeries(
-				"lower bounding box", 
+				"Lower slit-boundingbox", 
 				drawLowerBoundingBoxX,
 				drawLowerBoundingBoxY);
 
@@ -107,6 +118,12 @@ public class AnimatedDeflectionDiagram {
 			.setYAxisMin(-f.length/2)
 			.setYAxisMax(f.length/2);
 		
+		cpPlot.setMarker(SeriesMarkers.DIAMOND)
+			.setMarkerColor(Color.RED)
+			.setLineColor(Color.LIGHT_GRAY)
+			.setToolTips(new String[] {"Control " + cp.toString()});
+			
+		
 		trajectorySeries
 			.setMarker(SeriesMarkers.CIRCLE)
 			.setMarkerColor(Color.ORANGE)
@@ -123,7 +140,7 @@ public class AnimatedDeflectionDiagram {
 		lowerBoxSeries
 			.setMarker(SeriesMarkers.NONE)
 			.setLineColor(Color.MAGENTA);
-
+		
 		// show the chart
 		SwingWrapper<XYChart> sw = new SwingWrapper<XYChart>(chart);
 		sw.displayChart("Animated Deflection Diagram");
@@ -135,7 +152,8 @@ public class AnimatedDeflectionDiagram {
 		
 		String actionKeyL = "L";
 		Action onLeftArrow = new AbstractAction(actionKeyL) {
-			
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 
@@ -163,7 +181,8 @@ public class AnimatedDeflectionDiagram {
 		
 		String actionKeyR = "R";
 		Action onRightArrow = new AbstractAction(actionKeyR) {
-			
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				counter[0] = (counter[0]<deflections.size()-1) ? counter[0]+1 : counter[0];
@@ -194,28 +213,6 @@ public class AnimatedDeflectionDiagram {
 		ActionMap actionToKeypressMapper = sw.getXChartPanel().getActionMap();
 		actionToKeypressMapper.put(actionKeyL, onLeftArrow);
 		actionToKeypressMapper.put(actionKeyR, onRightArrow);
-		
-//		for (int i = 1; i < deflections.size(); i++) {
-//			// wait a second
-//			try {
-//				Thread.sleep(1000);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			
-//			// generate render data for new point
-//			xData = deflectionRenderData(f, deflections.get(i))[0];
-//			yData = deflectionRenderData(f, deflections.get(i))[1];
-//			
-//			// update render data, redraw
-//			chart.updateXYSeries(
-//					"Deflection of flexible Object, w(x)", 
-//					xData, 
-//					yData, 
-//					null);
-//			sw.repaintChart();
-//		}
 	}
 	
 	public static double[][] deflectionRenderData(FlexibleObject f, Point2D[] deflection){

@@ -1,5 +1,7 @@
 package userInterface;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.util.stream.DoubleStream;
 import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XYChart;
@@ -40,7 +42,7 @@ public class DeflectionDiagram {
 				.height(1150)
 				.title("Deflection")
 				.xAxisTitle("x in m, real world")
-				.yAxisTitle("x in m, real world")
+				.yAxisTitle("y in m, real world")
 				.build();
 		XYSeries series = chart.addSeries("Deflection of flexible Object, w(x)", xData, yDataInverted);
 		
@@ -52,22 +54,32 @@ public class DeflectionDiagram {
 				.setLegendVisible(true)
 				.setLegendPosition(LegendPosition.InsideNE))
 				.setMarkerSize(8);
-				
+		
+		// pretty pictures for paper
+		series.setLineWidth(50);
+		chart.getStyler().setLegendFont(new Font(Font.SANS_SERIF, Font.PLAIN, 50));
+		chart.getStyler().setLegendSeriesLineLength(0);
+		chart.getStyler().setLegendBorderColor(Color.WHITE);
+		chart.getStyler().setLegendPadding(100);
+		chart.getStyler().setAxisTitleFont(new Font(Font.SANS_SERIF, Font.ITALIC, 25));
+		chart.getStyler().setAxisTickLabelsFont(new Font(Font.SANS_SERIF, Font.PLAIN, 30));
+		chart.getStyler().setYAxisTickMarkSpacingHint(100);
+		
 		if (xData[1] < 0) {
 			chart.getStyler()
 				.setXAxisMin(-f.length)
 				.setXAxisMax(0d)
-				.setYAxisMin(-f.length/2)
-				.setYAxisMax(f.length/2);
+				.setYAxisMin(-f.length/16)
+				.setYAxisMax(f.length/16);
 		} else {
 			chart.getStyler()
 				.setXAxisMin(0d)
 				.setXAxisMax(f.length)
-				.setYAxisMin(-f.length/2)
-				.setYAxisMax(f.length/2);
+				.setYAxisMin(-f.length/16)
+				.setYAxisMax(f.length/16);
 		}
 			
-		series.setMarker(SeriesMarkers.CIRCLE);
+		series.setMarker(SeriesMarkers.NONE);
 		
 		new SwingWrapper<XYChart>(chart).displayChart("Deflection Diagram");
 	}

@@ -33,6 +33,7 @@ public class Main {
 			int deflectionRes = Integer.parseInt(p.getProperty("deflectionRes"));
 			int trajectoryRes = Integer.parseInt(p.getProperty("trajectoryRes"));
 			double slitSize = Double.parseDouble(p.getProperty("slitSize"));
+			boolean writeOnlySuccessful = Boolean.parseBoolean(p.getProperty("writeOnlySuccessful"));
 
 			FlexibleObject f = new FlexibleObject(length, width, thickness, density, youngsModulus, deflectionRes);
 
@@ -45,7 +46,7 @@ public class Main {
 				controlPoints.simulateAllCPs(trajectoryRes, slitSize);
 
 				System.out.println("Generated a total of " + controlPoints.amount + " control points");
-				controlPoints.writeARFF(8, "results_successful.arff", true);
+				controlPoints.writeARFF(8, "results_successful.arff", writeOnlySuccessful);
 			}
 			// SIMULATION RUN
 

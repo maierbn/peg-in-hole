@@ -17,7 +17,9 @@ public class Main {
 			p.load(new FileInputStream(configFile));
 			Boolean generateDatabase = Boolean.valueOf(p.getProperty("generateDatabase"));
 			Boolean simulateGivenControlPoint = Boolean.valueOf(p.getProperty("simulateGivenControlPoint"));
-
+			
+			String databaseFilename = String.valueOf(p.getProperty("databaseFilename"));
+			
 			double length = Double.parseDouble(p.getProperty("objectLength")); // meter
 			double width = Double.parseDouble(p.getProperty("objectWidth")); // meter
 			double thickness = Double.parseDouble(p.getProperty("objectThickness")); // meter
@@ -33,6 +35,7 @@ public class Main {
 			int deflectionRes = Integer.parseInt(p.getProperty("deflectionRes"));
 			int trajectoryRes = Integer.parseInt(p.getProperty("trajectoryRes"));
 			double slitSize = Double.parseDouble(p.getProperty("slitSize"));
+			boolean writeOnlySuccessful = Boolean.parseBoolean(p.getProperty("writeOnlySuccessful"));
 
 			FlexibleObject f = new FlexibleObject(length, width, thickness, density, youngsModulus, deflectionRes);
 
@@ -45,7 +48,7 @@ public class Main {
 				controlPoints.simulateAllCPs(trajectoryRes, slitSize);
 
 				System.out.println("Generated a total of " + controlPoints.amount + " control points");
-				controlPoints.writeARFF(8, "results_successful.arff", true);
+				controlPoints.writeARFF(8, databaseFilename, writeOnlySuccessful);
 			}
 			// SIMULATION RUN
 

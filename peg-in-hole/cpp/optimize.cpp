@@ -101,12 +101,12 @@ int main(int argc, const char* argv[]) {
   (void)argc;
   (void)argv;
 
-  double featureVectorCoeff_0 = atof(argv[1]);
-  double featureVectorCoeff_1 = atof(argv[2]);
-  double featureVectorCoeff_2 = atof(argv[3]);
-  double featureVectorCoeff_3 = atof(argv[4]);
+  double featureVectorCoeff_0 = atof(argv[2]);
+  double featureVectorCoeff_1 = atof(argv[3]);
+  double featureVectorCoeff_2 = atof(argv[4]);
+  double featureVectorCoeff_3 = atof(argv[5]);
 
-  std::string filename = "./t.arff";
+  std::string filename = "../" + std::string(argv[1]);
 
   std::cout << "# loading file: " << filename << std::endl;
   sgpp::datadriven::Dataset dataset =

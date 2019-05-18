@@ -4,28 +4,28 @@
 Das Projekt besteht aus zwei Teilen: Datengenerierung + Simulation in Java und Datenauswertung in C++. Das Bindeglied beider Programmteile stellt die Konfigurationsdatei `object*.ini` dar. Referenzimplementierung (bitte keine Kommentare in der `*.ini`, diese gehen beim parsen verloren):
 
     [Global]
-    generateDatabase=true				; if database from control points should be enabled
-    simulateGivenControlPoint=false			; if scenario with given control point should be simulated and visualized
-    deflectionRes=30				; resolution of object deflection for collision detection
-    trajectoryRes=30				; resolution of trajectory for collision detection
-    slitSize=0.005					; size of slit for collision detection
-    databaseFilename=test.arff			; filename for output file
+    generateDatabase=true			; if database from control points should be enabled
+    simulateGivenControlPoint=false		; if scenario with given control point should be simulated and visualized
+    deflectionRes=30			; resolution of object deflection for collision detection
+    trajectoryRes=30			; resolution of trajectory for collision detection
+    slitSize=0.005				; size of slit for collision detection
+    databaseFilename=test.arff		; filename for output file
     
     [Object]
-    objectLength=0.040				; object length
-    objectWidth=0.015				; width, relevant for cross section
-    objectThickness=0.002				; material parameter thickness
-    objectDensity=1150				; material parameter rho
-    objectYoungsModulus=3.6E6			; material parameter E
+    objectLength=0.040			; object length
+    objectWidth=0.015			; width, relevant for cross section
+    objectThickness=0.002			; material parameter thickness
+    objectDensity=1150			; material parameter rho
+    objectYoungsModulus=3.6E6		; material parameter E
     
     [Simulation]
-    cpX=0.20103816656013962				; control point: x coordinate
-    cpY=3.8647759142919378e-010			; control point: y coordinate
-    cpZ=0.27960541169755371				; control point: rotation
+    cpX=0.20103816656013962			; control point: x coordinate
+    cpY=3.8647759142919378e-010		; control point: y coordinate
+    cpZ=0.27960541169755371			; control point: rotation
     
     [Database]
-    granularity=20					; sampling size per dimension for generation of training data, sampling takes place in x-direction [0,object-length], y-direction: [0,object-length], angle [0,starting-angle]
-    writeOnlySuccessful=true			; if only simulation results with successful scenarios without collision should be written to the file
+    granularity=20				; sampling size per dimension for generation of training data, sampling takes place in x-direction [0,object-length], y-direction: [0,object-length], angle [0,starting-angle]
+    writeOnlySuccessful=true		; if only simulation results with successful scenarios without collision should be written to the file
 
 #### Kompilieren und Ausführen
 Sowohl für Windows als auch Linux stehen Skripts zum Kompilieren (`compile.bat`/`makefile`) und Ausführen (`test-optimizer.bat`/`test-optimizer.sh`) bereit.
@@ -37,7 +37,7 @@ Ausführen des Java-Teils:
 Ausführen des C++-Teils:
 
 	optimize.exe DataFile.arff configFileName.ini FeatureVectorDim1 FeatureVectorDim2 FeatureVectorDim3 FeatureVectorDim4
-
+----
 ### Roadmap
 #### Phase 1 - Offline
 + [x] Vorbereitung

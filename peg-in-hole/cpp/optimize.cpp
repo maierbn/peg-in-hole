@@ -30,6 +30,8 @@
 #include <sgpp/datadriven/tools/ARFFTools.hpp>
 #include <sgpp_optimization.hpp>
 #include <sgpp/globaldef.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/ini_parser.hpp>
 
 #include <algorithm>
 #include <iostream>
@@ -42,6 +44,7 @@ using sgpp::base::DataVector;
 using sgpp::base::Grid;
 using sgpp::base::GridGenerator;
 using sgpp::base::GridStorage;
+using boost::property_tree::ptree;
 
 /**
  * The function \f$f\colon [0, 1]^d \to \mathbb{R}\f$ to be minimized
@@ -101,12 +104,13 @@ int main(int argc, const char* argv[]) {
   (void)argc;
   (void)argv;
 
-  double featureVectorCoeff_0 = atof(argv[2]);
-  double featureVectorCoeff_1 = atof(argv[3]);
-  double featureVectorCoeff_2 = atof(argv[4]);
-  double featureVectorCoeff_3 = atof(argv[5]);
+  double featureVectorCoeff_0 = atof(argv[3]);
+  double featureVectorCoeff_1 = atof(argv[4]);
+  double featureVectorCoeff_2 = atof(argv[5]);
+  double featureVectorCoeff_3 = atof(argv[6]);
 
   std::string filename = "../" + std::string(argv[1]);
+  std::string ininame = "../" + std::string(argv[2]);
 
   std::cout << "# loading file: " << filename << std::endl;
   sgpp::datadriven::Dataset dataset =
@@ -321,15 +325,19 @@ int main(int argc, const char* argv[]) {
   std::cout << "xOpt = " << xOpt.toString() << "\n";
   std::cout << "f(xOpt) = " << fXOpt << ", ft(xOpt) = " << ftXOpt << "\n\n";
   
+  /**
+   * We modify the control point inside the .ini file
+   */
+
+   ptree pt;
+
+   boost::property_tree::ini_parser::read_ini( ininame, pt );
+
+   pt.put("Simulation.cpX", xOpt.get(0));
+   pt.put("Simulation.cpY", xOpt.get(1));
+   pt.put("Simulation.cpZ", xOpt.get(2));
+
+   boost::property_tree::write_ini( ininame, pt );
+
   return 0;
 }
-
-/**
- * The example program outputs the following results:
- * \verbinclude optimization.output.txt
- *
- * We see that both the gradient-based optimization of the smooth sparse grid
- * interpolant and the gradient-free optimization of the objective function
- * find reasonable approximations of the minimum, which lies at
- * \f$(3\pi/16, 3\pi/14) \approx (0.58904862, 0.67319843)\f$.
- */

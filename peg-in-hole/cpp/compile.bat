@@ -8,6 +8,7 @@ g++ optimize.cpp ^
 -IC:\build_sgpp\sgppWorkDir\pde\src ^
 -IC:\build_sgpp\sgppWorkDir\quadrature\src ^
 -IC:\build_sgpp\sgppWorkDir\solver\src ^
+-IC:\build_sgpp\boost ^
 -o optimize.o
 
 g++ optimize.o -fopenmp ^

@@ -26,8 +26,11 @@ Das Projekt besteht aus zwei Teilen: Datengenerierung + Simulation in Java und D
     cpZ=0.27960541169755371			; control point: rotation
     
     [Database]
-    granularity=20				; sampling size per dimension for generation of training data, sampling takes place in x-direction [0,object-length], y-direction: [0,object-length], angle [0,starting-angle]
-    writeOnlySuccessful=true		; if only simulation results with successful scenarios without collision should be written to the file
+    granularity=20				; sampling size per dimension for generation of training data, 
+                                sampling takes place in x-direction [0,object-length], 
+                                y-direction: [0,object-length], angle [0,starting-angle]
+    writeOnlySuccessful=true		; if only simulation results with successful scenarios without 
+                                    collision should be written to the file
 
 #### Kompilieren und Ausführen
 Sowohl für Windows als auch Linux stehen Skripts zum Kompilieren (`compile.bat`/`makefile`) und Ausführen (`test-optimizer.bat`/`test-optimizer.sh`) bereit.

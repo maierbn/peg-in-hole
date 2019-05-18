@@ -27,8 +27,8 @@ Das Projekt besteht aus zwei Teilen: Datengenerierung + Simulation in Java und D
     
     [Database]
     granularity=20				; sampling size per dimension for generation of training data, 
-                                        sampling takes place in x-direction [0,object-length], 
-                                        y-direction: [0,object-length], angle [0,starting-angle]
+                                            sampling takes place in x-direction [0,object-length], 
+                                            y-direction: [0,object-length], angle [0,starting-angle]
     writeOnlySuccessful=true		; if only simulation results with successful scenarios without 
                                             collision should be written to the file
 

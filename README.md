@@ -5,17 +5,17 @@ Das Projekt besteht aus zwei Teilen: Datengenerierung + Simulation in Java und D
 
     [Global]
     generateDatabase=true				; if database from control points should be enabled
-    simulateGivenControlPoint=false		; if scenario with given control point should be simulated and visualized
-    deflectionRes=30					; resolution of object deflection for collision detection
-    trajectoryRes=30					; resolution of trajectory for collision detection
-    slitSize=0.005						; size of slit for collision detection
+    simulateGivenControlPoint=false			; if scenario with given control point should be simulated and visualized
+    deflectionRes=30				; resolution of object deflection for collision detection
+    trajectoryRes=30				; resolution of trajectory for collision detection
+    slitSize=0.005					; size of slit for collision detection
     databaseFilename=test.arff			; filename for output file
     
     [Object]
-    objectLength=0.040					; object length
-    objectWidth=0.015					; width, relevant for cross section
+    objectLength=0.040				; object length
+    objectWidth=0.015				; width, relevant for cross section
     objectThickness=0.002				; material parameter thickness
-    objectDensity=1150					; material parameter rho
+    objectDensity=1150				; material parameter rho
     objectYoungsModulus=3.6E6			; material parameter E
     
     [Simulation]
@@ -24,7 +24,7 @@ Das Projekt besteht aus zwei Teilen: Datengenerierung + Simulation in Java und D
     cpZ=0.27960541169755371				; control point: rotation
     
     [Database]
-    granularity=20						; sampling size per dimension for generation of training data, sampling takes place in x-direction [0,object-length], y-direction: [0,object-length], angle [0,starting-angle]
+    granularity=20					; sampling size per dimension for generation of training data, sampling takes place in x-direction [0,object-length], y-direction: [0,object-length], angle [0,starting-angle]
     writeOnlySuccessful=true			; if only simulation results with successful scenarios without collision should be written to the file
 
 #### Kompilieren und Ausführen

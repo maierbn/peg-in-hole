@@ -1,5 +1,7 @@
 ## Forschungsprojekt Informatik - Peg-in-Hole
-
+### ToDo
+[] update makefile with path to boost library
+----
 ### Dokumentation
 Das Projekt besteht aus zwei Teilen: Datengenerierung + Simulation in Java und Datenauswertung in C++. Das Bindeglied beider Programmteile stellt die Konfigurationsdatei `object*.ini` dar. Referenzimplementierung (bitte keine Kommentare in der `*.ini`, diese gehen beim parsen verloren):
 

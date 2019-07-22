@@ -1,0 +1,1 @@
+java -jar .\test.jar object1.ini

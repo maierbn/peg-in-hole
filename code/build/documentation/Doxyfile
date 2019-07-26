@@ -1,0 +1,30 @@
+PROJECT_NAME           = "proj_franka_ctrl_peg_in_hole"
+PROJECT_NUMBER         = 
+STRIP_FROM_PATH        = /home/robo/ws_cpp/peg_in_hole \
+                         /home/robo/ws_cpp/peg_in_hole/build
+INPUT                  = /home/robo/ws_cpp/peg_in_hole/Readme.md \
+                         /home/robo/ws_cpp/peg_in_hole \
+                         /home/robo/ws_cpp/peg_in_hole/build
+FILE_PATTERNS          = *.h \
+                         *.cpp
+EXCLUDE_PATTERNS       = /home/robo/ws_cpp/peg_in_hole/test/* \
+                         /home/robo/ws_cpp/peg_in_hole/include/*
+RECURSIVE              = YES
+USE_MDFILE_AS_MAINPAGE = /home/robo/ws_cpp/peg_in_hole/Readme.md
+
+GENERATE_LATEX = NO
+
+USE_MATHJAX = YES
+
+EXTRACT_ALL          = YES
+CLASS_DIAGRAMS      = YES
+HIDE_UNDOC_RELATIONS = NO
+HAVE_DOT             = YES
+CLASS_GRAPH          = YES
+COLLABORATION_GRAPH  = YES
+UML_LOOK             = YES
+UML_LIMIT_NUM_FIELDS = 50
+TEMPLATE_RELATIONS   = YES
+DOT_GRAPH_MAX_NODES  = 100
+MAX_DOT_GRAPH_DEPTH  = 0
+DOT_TRANSPARENT      = YES

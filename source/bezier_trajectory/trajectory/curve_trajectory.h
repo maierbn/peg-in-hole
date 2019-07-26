@@ -20,23 +20,10 @@ public:
    * \arg[in] initialPose starting pose (could be obtained from the robot directly before creation)
    *          [x,y,z, R, P, Y], position in [m], orientation in [rad]
    * \arg[in] curve trajectory curve, offset by initialPose [x,y,z]
-   * \arg[in] endTime duration of the trajectory [s]
    * \arg[in] dt the discretization step width [s]. Must match the execution times in the robot
    * control.
    */
-  CurveTrajectory(const Eigen::Vector6d &initialPose, Eigen::Vector3d (*curve3d)(double t), double endTime, double dt);
-
-  /** \brief create a linear trajectory witgh motion profile between to points (end effector in
-   * robot base coordinate system).
-   *
-   * \arg[in] initialPose starting pose (could be obtained from the robot directly before creation)
-   *          [x,y,z, R, P, Y], position in [m], orientation in [rad]
-   * \arg[in] curve trajectory curve, offset by initialPose [x,y,z]
-   * \arg[in] endTime duration of the trajectory [s]
-   * \arg[in] dt the discretization step width [s]. Must match the execution times in the robot
-   * control.
-   */
-  CurveTrajectory(const Eigen::Vector6d &initialPose, Eigen::Vector3d (*curve6d)(double t), double endTime, double dt);
+  CurveTrajectory(const Eigen::Vector6d initialPose, Eigen::Vector6d (*curve)(double t), double endTime, double dt);
 
   /** \brief get the pose values column-wise for the whole trajectory (end effector in robot base),
    * sampled with dt. */
@@ -56,9 +43,9 @@ protected:
   /// the geometric description of the path
   std::unique_ptr<LinearPath> p_s;
 
-  double endTime_;   ///< end time of the trajectory, i.e. duration
-  double dt_;        ///< sampling width or timestep width
+  double endTime_;  // duration of trajectory
+  double dt_;  // timstep width or sampling width of the trajectory
+  Eigen::Vector6d initialPose_;  // initial pose from where to start trajectory
 
-  Eigen::Vector3d (*curve3d_)(double t) = nullptr;   ///< the curve that describes the trajectory in ℝ^3
-  Eigen::Vector6d (*curve6d_)(double t) = nullptr;   ///< the curve that describes the trajectory in ℝ^6, i.e. pose
+  Eigen::Vector6d (*curve_)(double t);   // curve that describes the trajectory
 };

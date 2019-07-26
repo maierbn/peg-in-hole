@@ -1,0 +1,2 @@
+/usr/bin/ar qc libtrajectory_planner.a  CMakeFiles/trajectory_planner.dir/Trajectory.cpp.o CMakeFiles/trajectory_planner.dir/MotionProfile.cpp.o CMakeFiles/trajectory_planner.dir/Path.cpp.o
+/usr/bin/ranlib libtrajectory_planner.a

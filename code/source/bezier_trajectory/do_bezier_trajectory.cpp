@@ -1,6 +1,4 @@
-#include "trajectory_iterator.h"
-#include "trajectory/linear_trajectory.h"
-#include "trajectory/curve_trajectory.h"
+#include "Trajectory.h"
 
 #include <franka/exception.h>
 #include <franka/robot.h>
@@ -9,54 +7,38 @@
 
 #include <iostream>
 
-const std::string robot_ip = "172.16.0.2";
+std::string robot_ip = "172.16.0.2";
 
 void setDefaultBehaviour(franka::Robot &robot);
-
-/** example curve function used for the trajectory */
-Eigen::Vector3d curve(double t) {
-  Eigen::Vector3d result;
-  result[0] = t;
-  result[1] = t*t;
-  result[2] = 0;
-
-  return result;
-}
 
 int main() {
 
   try {
-
-    // connect to robot
-    std::cout << "connect to robot " << std::endl;
+    // Connect to robot
     franka::Robot panda(robot_ip);
     setDefaultBehaviour(panda);
 
-    // read current robot state
+    // 2. read current robot state
     franka::RobotState initial_state = panda.readOnce();
     Eigen::Vector6d initial_pose = homogeneousTfArray2PoseVec(initial_state.O_T_EE);
+
     std::cout << "initial pose: " << initial_pose.transpose();
 
-    // calculate target pose
+    // 3. Calculate target pose
     Eigen::Vector6d targetPose = initial_pose;
     targetPose.head<3>() += Eigen::Vector3d::Constant(0.1);
 
-    // LinearTrajectory and TrajectoryIteratorCartesianVelocity object creation
-    LinearTrajectory linearTrajectory(initial_pose, targetPose, 0.05, 0.5, 1.e-3);
-
-
-    CurveTrajectory curveTrajectory(initial_pose, curve, 10.0, 1.e-3);
-
-    std::cout << "t_E = " << linearTrajectory.getTEnd() << " s" << std::endl;
-
-    auto motionIterator = std::make_unique<TrajectoryIteratorCartesianVelocity>(linearTrajectory);
+    // 4./5. LinearTrajectory and TrajectoryIteratorCartesianVelocity object creation
+    auto traj = LinearTrajectory(initial_pose, targetPose, 0.05, 0.5, 1.e-3);
+    std::cout << "t_E = " << traj.getTEnd() << " s" << std::endl;
+    auto motionIterator = std::make_unique<TrajectoryIteratorCartesianVelocity>(traj);
 
     std::cout << "WARNING: The robot will move now. "
               << "Keep around the STOP button." << std::endl
               << "Press ENTER to continue." << std::endl;
     std::cin.ignore();
 
-    // Franka Robot Controller:
+    // 6. Franka Robot Controller:
     panda.control(*motionIterator,
                   /*controller_mode = */ franka::ControllerMode::kCartesianImpedance);
 

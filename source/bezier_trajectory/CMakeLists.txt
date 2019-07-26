@@ -15,5 +15,5 @@ add_library(trajectory_planner
 target_link_libraries(trajectory_planner Franka::Franka)
 target_include_directories(trajectory_planner PUBLIC trajectory)
 
-add_executable(${PROJECT_NAME} do_bezier_trajectory.cpp)
+add_executable(${PROJECT_NAME} main.cpp)
 target_link_libraries(${PROJECT_NAME} trajectory_planner Franka::Franka)

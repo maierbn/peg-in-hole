@@ -45,7 +45,7 @@ int main() {
     LinearTrajectory linearTrajectory(initial_pose, targetPose, 0.05, 0.5, 1.e-3);
 
 
-    CurveTrajectory curveTrajectory(initial_pose, curve, 1.e-3);
+    CurveTrajectory curveTrajectory(initial_pose, curve, 10.0, 1.e-3);
 
     std::cout << "t_E = " << linearTrajectory.getTEnd() << " s" << std::endl;
 

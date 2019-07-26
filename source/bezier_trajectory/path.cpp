@@ -1,4 +1,4 @@
-#include "Path.h"
+#include "path.h"
 
 LinearPath::LinearPath(const Eigen::Vector6d &from, const Eigen::Vector6d &to) {
   if (from.size() != to.size()) {

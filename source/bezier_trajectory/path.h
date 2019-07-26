@@ -5,13 +5,7 @@
 #include <algorithm>
 #include <stdexcept>
 
-namespace Eigen {
-/// 6d vector representation (used for [x,y,z,roll_x,pitch_y,yaw_z])
-typedef Matrix<double, 6, 1> Vector6d;
-
-/// Matrix with 6 rows stored colwise (fast colwise access)
-typedef Eigen::Matrix<double, 6, Eigen::Dynamic, Eigen::ColMajor> Matrix6dynd;
-} // namespace Eigen
+#include "eigen_utility.h"
 
 /** \brief Abstract superclass for all path objects. Defines the interface for all concrete paths.
  */

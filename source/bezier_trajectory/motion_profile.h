@@ -1,5 +1,7 @@
 #pragma once
 
+#include "eigen_utility.h"
+
 #include <algorithm>
 #include <eigen3/Eigen/Eigen>
 

@@ -24,7 +24,7 @@ else()
   endif()
 endif()
 
-option(STRICT "Treat warnings as errors" ON)
+option(STRICT "Treat warnings as errors" OFF)
 if(STRICT)
   if(MSVC)
     add_compile_options(/WX)

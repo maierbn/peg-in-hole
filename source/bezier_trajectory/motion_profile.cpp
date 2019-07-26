@@ -1,4 +1,4 @@
-#include "MotionProfile.h"
+#include "motion_profile.h"
 
 // the coefficients of the polynomial (a_4 - a_7)
 const Eigen::Vector4d PolynomialReferenceTraj::poly_coeffs(35., -84., 70., -20.);

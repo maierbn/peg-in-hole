@@ -10,6 +10,7 @@ add_library(trajectory_planner
   trajectory_iterator.cpp
   motion_profile.cpp
   eigen_utility.cpp
+  kbhit.cpp
   path.cpp
 )
 target_link_libraries(trajectory_planner Franka::Franka)

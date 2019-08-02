@@ -17,24 +17,7 @@
  *  This can be used to manually build a position or velocity trajectory for the robot. For the
  * Franka Emika Panda it is easier to use TrajectoryIteratorCartesianVelocity.
  */
-class TrajectoryIteratorCartesian {
-private:
-  /// column-wise storage of precalculated poses for the whole trajectory (end effector in
-  /// robot base coordinate system).
-  Eigen::Matrix6dynd p_t;
-
-  /// column-wise storage of precalculated pose velocities for the whole trajectory (end effector in
-  /// robot base coordinate system).
-  Eigen::Matrix6dynd dp_dt;
-
-  /// step size between time steps [s]
-  const double dt;
-
-  // end time of the trajcectory. Assuming it starts at 0 and progresses constantly with dt [s]
-  const double t_E;
-
-  /// current iteration number
-  Eigen::Index itr;
+class TrajectoryIteratorCartesian { 
 
 public:
   TrajectoryIteratorCartesian(const Trajectory &traj);
@@ -85,6 +68,27 @@ public:
    *
    */
   double getEndTime() const;
+  
+protected:
+  /// column-wise storage of precalculated poses for the whole trajectory (end effector in
+  /// robot base coordinate system).
+  Eigen::Matrix6dynd p_t;
+
+  /// column-wise storage of precalculated pose velocities for the whole trajectory (end effector in
+  /// robot base coordinate system).
+  Eigen::Matrix6dynd dp_dt;
+
+  /// step size between time steps [s]
+  const double dt;
+
+  // end time of the trajcectory. Assuming it starts at 0 and progresses constantly with dt [s]
+  const double t_E;
+
+  /// current iteration number
+  Eigen::Index itr;
+
+  // current time of robot
+  double currentTime_; 
 };
 
 /** \brief defines the controlller callback for speed control directly with `operator()`.

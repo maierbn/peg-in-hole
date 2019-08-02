@@ -46,6 +46,7 @@ protected:
   double endTime_;  // duration of trajectory
   double dt_;  // timstep width or sampling width of the trajectory
   Eigen::Vector6d initialPose_;  // initial pose from where to start trajectory
+  Eigen::Vector6d curveStartPos_;   // initial point of the curve
 
   Eigen::Vector6d (*curve_)(double t);   // curve that describes the trajectory
 };

@@ -54,13 +54,13 @@ operator()(const franka::RobotState &, franka::Duration time_step) {
   if (getCurrentTime() < getEndTime()) {
     if (false)
     {
-      std::cout << "cartVelocity: " 
-        << "vx: " << cartesianVelDes.O_dP_EE[0] << "," 
-        << "vy: " << cartesianVelDes.O_dP_EE[1] << "," 
-        << "vz: " << cartesianVelDes.O_dP_EE[2] << "," 
-        << "omegax: " << cartesianVelDes.O_dP_EE[3] << "," 
-        << "omegay: " << cartesianVelDes.O_dP_EE[4] << "," 
-        << "omegaz: " << cartesianVelDes.O_dP_EE[5] << std::endl;
+      std::cout << "t: " << currentTime_ << ", cartVelocity: " 
+        << "  vx: " << cartesianVelDes.O_dP_EE[0] << "," 
+        << "  vy: " << cartesianVelDes.O_dP_EE[1] << "," 
+        << "  vz: " << cartesianVelDes.O_dP_EE[2] << "," 
+        << "  omegax: " << cartesianVelDes.O_dP_EE[3] << "," 
+        << "  omegay: " << cartesianVelDes.O_dP_EE[4] << "," 
+        << "  omegaz: " << cartesianVelDes.O_dP_EE[5] << std::endl;
     }
     return cartesianVelDes;
   } else {

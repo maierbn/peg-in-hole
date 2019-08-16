@@ -58,6 +58,12 @@ public:
    * */
   static std::pair<Eigen::VectorXd, Eigen::VectorXd>
   ds_dt(double v_max_allowed, double a_max_allowed, double L, double dt);
+
+  /** \brief Evaluate smooth motion profile for end time 1.0
+   * 
+   * \arg[in] t evaluation time 
+   */
+  static double evaluate(double t);
 };
 
 /** \brief Motion profile s(t) with smooth derivatives up to order 3.

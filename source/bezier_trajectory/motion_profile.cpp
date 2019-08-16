@@ -12,6 +12,19 @@ double PolynomialReferenceTraj::get_t_E(double v_max_allowed, double a_max_allow
   return ceil(t_E / dt) * dt; // round t_E to whole dt steps number
 }
 
+double PolynomialReferenceTraj::evaluate(double t)
+{
+  std::size_t N_poly = poly_coeffs.size();
+
+  double result = 0.0;
+  for (std::size_t i = 0; i < N_poly; i++) {
+    double expCoeff = N_poly + i;
+    result += poly_coeffs[i] * std::pow(t, expCoeff);
+  }
+
+  return result;
+}
+
 std::pair<Eigen::VectorXd, Eigen::VectorXd>
 PolynomialReferenceTraj::s_t(double v_max_allowed, double a_max_allowed, double L, double dt) {
   if (v_max_allowed < 0 || a_max_allowed < 0 || L < 0 || dt < 0) {

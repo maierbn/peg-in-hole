@@ -14,7 +14,7 @@ const std::string robot_ip = "172.16.0.2";
 
 void setDefaultBehaviour(franka::Robot &robot);
 
-const double endTime = 15.0;    // duration of the trajectory curve(t), t ∈ [0,endTime]
+const double endTime = 20.0;    // duration of the trajectory curve(t), t ∈ [0,endTime]
 
 /** example curve function used for the trajectory */
 Eigen::Vector6d curve(double t) {
@@ -24,17 +24,17 @@ Eigen::Vector6d curve(double t) {
   Eigen::Vector6d result;
 
   // specify function in cm
-  result[0] = alpha * 10;          // x
-  result[1] = beta*beta * 10;          // y
+  //result[0] = -alpha * 50;          // x
+  //result[1] = -sin(M_PI*alpha)*10;          // y
   result[2] = 0;  // z
 
   // transform from centi-meters to meters
   result *= 1e-2;
 
   // no angle change
-  result[3] = 0;
-  result[4] = 0;
-  result[5] = 0;
+  result[3] = 0;   // roll
+  result[4] = alpha*20 / 180.0 * M_PI;   // pitch
+  result[5] = 0;   // yaw
 
   return result;
 }
@@ -58,7 +58,7 @@ int main() {
     Eigen::Vector6d restingPose;
     //restingPose << 0.209435, -0.470376, 0.5, initialPose[3], initialPose[4], initialPose[5];
     restingPose << 0.257329,  -0.332922,   0.289701  , initialPose[3], initialPose[4], initialPose[5];
-    //restingPose << 0.209435, -0.470376, 0.546975, 3.11606, 0.00298367,  0.0321451;
+    //restingPose <<  0.329806,  -0.376262,   0.22, initialPose[3], initialPose[4], initialPose[5];
     
     // LinearTrajectory and TrajectoryIteratorCartesianVelocity object creation
     LinearTrajectory linearTrajectory(initialPose, restingPose, 0.5, 0.5, 1.e-3);
@@ -114,7 +114,7 @@ int main() {
 }
 
 void setDefaultBehaviour(franka::Robot &robot) {
-  const double safetyFactor = 1.0;    
+  const double safetyFactor = 1.0;     // seems to have no effect at all
 
   const double torqueContactAcceleration =    safetyFactor * 30;     //20
   const double torqueCollisionAcceleration =  safetyFactor * 30;  // 20
@@ -141,8 +141,9 @@ void setDefaultBehaviour(franka::Robot &robot) {
       lower_force_thresholds_nominal,       upper_force_thresholds_nominal);
   robot.automaticErrorRecovery();
 
-  robot.setJointImpedance({{3000, 3000, 3000, 2500, 2500, 2000, 2000}});
-  robot.setCartesianImpedance({{3000, 3000, 3000, 300, 300, 300}});
+  const double impedance_scaling_factor = 1.0;  // don't change
+  robot.setJointImpedance({{3000*impedance_scaling_factor, 3000*impedance_scaling_factor, 3000*impedance_scaling_factor, 2500*impedance_scaling_factor, 2500*impedance_scaling_factor, 2000*impedance_scaling_factor, 2000*impedance_scaling_factor}});
+  robot.setCartesianImpedance({{3000*impedance_scaling_factor, 3000*impedance_scaling_factor, 3000*impedance_scaling_factor, 300*impedance_scaling_factor, 300*impedance_scaling_factor, 300*impedance_scaling_factor}});
 
 
   

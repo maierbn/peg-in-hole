@@ -8,6 +8,7 @@ add_library(trajectory_planner
   trajectory/linear_trajectory.cpp
   trajectory/curve_trajectory.cpp
   trajectory/curve_smoothener.cpp
+  trajectory/three_points_bezier_trajectory.cpp
   trajectory_iterator.cpp
   motion_profile.cpp
   eigen_utility.cpp

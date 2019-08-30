@@ -4,7 +4,7 @@
 #include <iostream>
 
 CurveTrajectory::CurveTrajectory(const Eigen::Vector6d initialPose, 
-  Eigen::Vector6d (*curve)(double t), double endTime, double dt) :
+  std::function<Eigen::Vector6d (double t)> curve, double endTime, double dt) :
   endTime_(endTime), dt_(dt), initialPose_(initialPose)
 {
 

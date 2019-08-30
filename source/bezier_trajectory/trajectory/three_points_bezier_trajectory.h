@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../eigen_utility.h"
+
 #include "curve_trajectory.h"
 
 /** \brief implements a trajectory following a bezier trajectory with 3 control points.

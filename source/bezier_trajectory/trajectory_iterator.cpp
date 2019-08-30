@@ -52,7 +52,7 @@ operator()(const franka::RobotState &, franka::Duration time_step) {
   }
 
   if (getCurrentTime() < getEndTime()) {
-    if (false)
+    if (true)
     {
       std::cout << "t: " << currentTime_ << ", cartVelocity: " 
         << "  vx: " << cartesianVelDes.O_dP_EE[0] << "," 

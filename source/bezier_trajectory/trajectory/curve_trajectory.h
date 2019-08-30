@@ -2,6 +2,8 @@
 
 #include <memory>
 #include <array>
+#include <functional>
+#include <utility>
 
 #include <franka/control_types.h>
 #include <franka/robot_state.h>
@@ -23,7 +25,7 @@ public:
    * \arg[in] dt the discretization step width [s]. Must match the execution times in the robot
    * control.
    */
-  CurveTrajectory(const Eigen::Vector6d initialPose, Eigen::Vector6d (*curve)(double t), double endTime, double dt);
+  CurveTrajectory(const Eigen::Vector6d initialPose, std::function<Eigen::Vector6d (double t)> curve, double endTime, double dt);
 
   /** \brief get the pose values column-wise for the whole trajectory (end effector in robot base),
    * sampled with dt. */
@@ -48,5 +50,5 @@ protected:
   Eigen::Vector6d initialPose_;  // initial pose from where to start trajectory
   Eigen::Vector6d curveStartPos_;   // initial point of the curve
 
-  Eigen::Vector6d (*curve_)(double t);   // curve that describes the trajectory
+  std::function<Eigen::Vector6d (double t)> curve_;   // curve that describes the trajectory
 };

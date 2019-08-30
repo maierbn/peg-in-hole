@@ -22,7 +22,7 @@ void initialize(Eigen::Vector6d (*curve)(double), double endTime)
 
 double computeArclengthOriginalCurve(double time)
 {
-    const int nSamples = 1000;
+    const int nSamples = 100;
     Eigen::Vector3d previousPosition = originalCurve(0).head<3>();
     double curveLength = 0;
 

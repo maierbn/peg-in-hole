@@ -29,7 +29,7 @@ public:
    * \note the return value will be the same, until step() is called.
    *
    */
-  std::array<double, 16> getCartesianPose() const;
+ // std::array<double, 16> getCartesianPose() const;
 
   /** \brief get current cartesian velocities
    *

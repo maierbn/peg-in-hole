@@ -14,7 +14,7 @@ const std::string robot_ip = "172.16.0.2";
 
 void setDefaultBehaviour(franka::Robot &robot);
 
-const double endTime = 20.0;    // duration of the trajectory curve(t), t ∈ [0,endTime]
+const double endTime = 5.0;    // duration of the trajectory curve(t), t ∈ [0,endTime]
 
 /** example curve function used for the trajectory */
 Eigen::Vector6d curve(double t) {
@@ -22,10 +22,11 @@ Eigen::Vector6d curve(double t) {
   double beta = 2*alpha - 1;      // run from -1 to 1
 
   Eigen::Vector6d result;
+  result << 0, 0, 0, 0, 0, 0;
 
   // specify function in cm
-  //result[0] = -alpha * 50;          // x
-  //result[1] = -sin(M_PI*alpha)*10;          // y
+  result[0] = -alpha * 50;          // x
+  result[1] = -sin(M_PI*alpha)*10.0;          // y
   result[2] = 0;  // z
 
   // transform from centi-meters to meters
@@ -33,7 +34,7 @@ Eigen::Vector6d curve(double t) {
 
   // no angle change
   result[3] = 0;   // roll
-  result[4] = alpha*20 / 180.0 * M_PI;   // pitch
+  result[4] = 0; //alpha*10 / 180.0 * M_PI;   // pitch
   result[5] = 0;   // yaw
 
   return result;
@@ -56,7 +57,9 @@ int main() {
     
     // calculate resting pose
     Eigen::Vector6d restingPose;
+    const double epsilon = 1e-5;
     //restingPose << 0.209435, -0.470376, 0.5, initialPose[3], initialPose[4], initialPose[5];
+    //restingPose <<  0.40, -0.20,   0.5, epsilon, -M_PI+epsilon, M_PI-epsilon;
     restingPose << 0.257329,  -0.332922,   0.289701  , initialPose[3], initialPose[4], initialPose[5];
     //restingPose <<  0.329806,  -0.376262,   0.22, initialPose[3], initialPose[4], initialPose[5];
     

@@ -48,18 +48,25 @@ Eigen::Matrix6dynd CurveTrajectory::dp_dt() const {
     // compute current time
     double t = i*dt_;
 
-    double h = 1e-5;   // do not set too small!
-/*
-    std::cout << "curve: " << curve_(t+h).transpose() << std::endl;
-    std::cout << "curve: " << curve_(t-h).transpose() << std::endl;
-*/
-    if (t-h < 0)
+    double h = 1e-4;   // do not set too small!
+    double epsilon = 1e-10;
+
+    if (true)
+    {
+      std::cout << "t: " << t << ", t-h: " << t-h << ", " << ((t-h) < epsilon) << std::endl;
+      std::cout << "curve(" << t-h << "): " << curve_(t-h).transpose() << std::endl;
+      std::cout << "curve(" << t << "): " << curve_(t).transpose() << std::endl;
+      std::cout << "curve(" << t+h << "): " << curve_(t+h).transpose() << std::endl;
+    }
+
+    if (t-h < 0+epsilon)
     {
       Eigen::Vector6d velocity = (curve_(t+h) - curve_(t)) / h;
+      velocity << 0, 0, 0, 0, 0, 0;
       velocities.col(i) = velocity;
       //std::cout << "0 v: " << velocities.col(i).transpose() << std::endl;
     }
-    else if (t+h > endTime_)
+    else if (t+h > endTime_+epsilon)
     {
       Eigen::Vector6d velocity = (curve_(t) - curve_(t-h)) / h;
       velocities.col(i) = velocity;

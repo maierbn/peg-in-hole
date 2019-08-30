@@ -5,12 +5,12 @@
 
 TrajectoryIteratorCartesian::TrajectoryIteratorCartesian(const Trajectory &traj)
     : p_t(traj.p_t()), dp_dt(traj.dp_dt()), dt(traj.getDt()), t_E(traj.getTEnd()), itr(0) {}
-
+/* 
 std::array<double, 16> TrajectoryIteratorCartesian::getCartesianPose() const {
   const Eigen::Vector6d currentPose = this->p_t.col(this->itr);
 
   return poseVec2HomogeneousTfArray(currentPose);
-}
+}*/
 
 std::array<double, 6> TrajectoryIteratorCartesian::getCartesianVelocity() const {
   const Eigen::Vector6d currentVel = this->dp_dt.col(this->itr);
@@ -52,7 +52,7 @@ operator()(const franka::RobotState &, franka::Duration time_step) {
   }
 
   if (getCurrentTime() < getEndTime()) {
-    if (true)
+    if (false)
     {
       std::cout << "t: " << currentTime_ << ", cartVelocity: " 
         << "  vx: " << cartesianVelDes.O_dP_EE[0] << "," 

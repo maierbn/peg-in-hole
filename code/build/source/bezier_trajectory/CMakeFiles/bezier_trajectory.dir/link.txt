@@ -1,1 +1,0 @@
-/usr/bin/c++  -O3 -DNDEBUG   CMakeFiles/bezier_trajectory.dir/do_bezier_trajectory.cpp.o  -o bezier_trajectory -Wl,-rpath,/opt/ros/kinetic/lib libtrajectory_planner.a /opt/ros/kinetic/lib/libfranka.so.0.7.1 

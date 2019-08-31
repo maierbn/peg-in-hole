@@ -3,8 +3,8 @@
 #include <iomanip>
 #include <iostream>
 
-CurveTrajectory::CurveTrajectory(const Eigen::Vector6d initialPose, 
-  std::function<Eigen::Vector6d (double t)> curve, double endTime, double dt) :
+CurveTrajectory::CurveTrajectory(const GripperPose initialPose,
+  std::function<GripperPose (double t)> curve, double endTime, double dt) :
   endTime_(endTime), dt_(dt), initialPose_(initialPose)
 {
 
@@ -15,78 +15,75 @@ CurveTrajectory::CurveTrajectory(const Eigen::Vector6d initialPose,
 
   curve_ = curve;
   curveStartPos_ = curve_(0);
-  std::cout << "curveStartPos: " << curveStartPos_.transpose() << std::endl;
+  std::cout << "curveStartPos: " << curveStartPos_.position.transpose() << std::endl;
 }
 
-Eigen::Matrix6dynd CurveTrajectory::p_t() const {
+Eigen::Matrix7dynd CurveTrajectory::poses() const {
   
   int nSteps = int(round(endTime_ / dt_));
   std::cout << "nSteps: " << nSteps << std::endl;
 
-  Eigen::Matrix6dynd poses(6,nSteps);
+  Eigen::Matrix7dynd poses(7,nSteps);
 
   for (int i = 0; i < nSteps; i++)
   {
     // compute current time
     double t = i*dt_;
 
-    Eigen::Vector6d position = curve_(t) - curveStartPos_;
-    poses.col(i) = position + initialPose_;
+    const GripperPose position = curve_(t) - curveStartPos_ + initialPose_;
+    poses.col(i) = position.getVector7d();
   }
 
   return poses;
 }
 
-Eigen::Matrix6dynd CurveTrajectory::dp_dt() const {
+Eigen::Matrix6dynd CurveTrajectory::poseVelocities() const {
 
   int nSteps = int(round(endTime_ / dt_));
+  std::cout << "nSteps: " << nSteps << std::endl;
 
   Eigen::Matrix6dynd velocities(6,nSteps);
+
+  const double h = 1e-5;   // do not set too small!
 
   for (int i = 0; i < nSteps; i++)
   {
     // compute current time
     double t = i*dt_;
 
-    double h = 1e-4;   // do not set too small!
-    double epsilon = 1e-10;
+    //std::cout << "t: " << t << ", curve(" << t << "): " << curve_(t).position.transpose() << std::endl;
 
-    if (true)
+    // compute velocity by 2nd order central difference quotient
+    Eigen::Vector6d curve0 = curve_(t+h).getVector6d();
+    Eigen::Vector6d curve1 = curve_(t-h).getVector6d();
+
+    Eigen::Vector6d difference = curve0 - curve1;
+
+    // account for wrap-around errors in the Euler angles
+    for (int j = 3; j < 6; j++)
     {
-      std::cout << "t: " << t << ", t-h: " << t-h << ", " << ((t-h) < epsilon) << std::endl;
-      std::cout << "curve(" << t-h << "): " << curve_(t-h).transpose() << std::endl;
-      std::cout << "curve(" << t << "): " << curve_(t).transpose() << std::endl;
-      std::cout << "curve(" << t+h << "): " << curve_(t+h).transpose() << std::endl;
+      if (fabs(difference[j]) > M_PI)
+      {
+        if (difference[j] > 0)
+          difference[j] -= M_2_PI;
+        else
+          difference[j] += M_2_PI;
+      }
     }
 
-    if (t-h < 0+epsilon)
-    {
-      Eigen::Vector6d velocity = (curve_(t+h) - curve_(t)) / h;
-      velocity << 0, 0, 0, 0, 0, 0;
-      velocities.col(i) = velocity;
-      //std::cout << "0 v: " << velocities.col(i).transpose() << std::endl;
-    }
-    else if (t+h > endTime_+epsilon)
-    {
-      Eigen::Vector6d velocity = (curve_(t) - curve_(t-h)) / h;
-      velocities.col(i) = velocity;
-      //std::cout << "2 v: " << velocities.col(i).transpose() << std::endl;
-    }
-    else
-    {
-      Eigen::Vector6d velocity = (curve_(t+h) - curve_(t-h)) / (2*h);
-      velocities.col(i) = velocity;      
-      //std::cout << "  v: " << velocities.col(i).transpose() << std::endl;
-    }
+    Eigen::Vector6d velocity = difference / (2*h);
+    velocities.col(i) = velocity;
+
+    //std::cout << "  v: " << velocities.col(i).transpose() << std::endl;
   }
   return velocities;
 
 }
 
-double CurveTrajectory::getDt() const {
+double CurveTrajectory::dt() const {
   return dt_;
 }
 
-double CurveTrajectory::getTEnd() const {
+double CurveTrajectory::endTime() const {
   return endTime_;
 }

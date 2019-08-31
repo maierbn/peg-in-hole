@@ -10,10 +10,12 @@
 #include <franka/duration.h>
 
 #include "trajectory.h"
+#include "gripper_pose.h"
 
 /** \brief implements a trajectory following an arbitrary curve ∈ ℝ^3
  */
-class CurveTrajectory : public Trajectory {
+class CurveTrajectory : public Trajectory
+{
 public:
 
   /** \brief create a linear trajectory witgh motion profile between to points (end effector in
@@ -25,30 +27,27 @@ public:
    * \arg[in] dt the discretization step width [s]. Must match the execution times in the robot
    * control.
    */
-  CurveTrajectory(const Eigen::Vector6d initialPose, std::function<Eigen::Vector6d (double t)> curve, double endTime, double dt);
+  CurveTrajectory(const GripperPose initialPose, std::function<GripperPose (double t)> curve, double endTime, double dt);
 
   /** \brief get the pose values column-wise for the whole trajectory (end effector in robot base),
    * sampled with dt. */
-  Eigen::Matrix6dynd p_t() const override;
+  Eigen::Matrix7dynd poses() const override;
 
   /** \brief get the pose velocity values column-wise for the whole trajectory (end effector in
    * robot base), sampled with dt. */
-  Eigen::Matrix6dynd dp_dt() const override;
+  Eigen::Matrix6dynd poseVelocities() const override;
 
   /** \brief get sample period dt [s] */
-  double getDt() const override;
+  double dt() const override;
 
   /** \brief get calculated end time [s] */
-  double getTEnd() const override;
+  double endTime() const override;
 
 protected:
-  /// the geometric description of the path
-  std::unique_ptr<LinearPath> p_s;
-
   double endTime_;  // duration of trajectory
   double dt_;  // timstep width or sampling width of the trajectory
-  Eigen::Vector6d initialPose_;  // initial pose from where to start trajectory
-  Eigen::Vector6d curveStartPos_;   // initial point of the curve
+  GripperPose initialPose_;  // initial pose from where to start trajectory
+  GripperPose curveStartPos_;   // initial point of the curve
 
-  std::function<Eigen::Vector6d (double t)> curve_;   // curve that describes the trajectory
+  std::function<GripperPose (double t)> curve_;   // curve that describes the trajectory
 };

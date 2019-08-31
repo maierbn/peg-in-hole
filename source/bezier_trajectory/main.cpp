@@ -1,7 +1,8 @@
-#include "trajectory_iterator.h"
+#include "trajectory_utility/trajectory_iterator.h"
 #include "trajectory/linear_trajectory.h"
 #include "trajectory/curve_trajectory.h"
-#include "trajectory/curve_smoothener.h"
+#include "trajectory/smooth_curve_trajectory.h"
+#include "trajectory/peg_in_hole_trajectory.h"
 
 #include <franka/exception.h>
 #include <franka/robot.h>
@@ -17,51 +18,82 @@ void setDefaultBehaviour(franka::Robot &robot);
 const double endTime = 5.0;    // duration of the trajectory curve(t), t ∈ [0,endTime]
 
 /** example curve function used for the trajectory */
-Eigen::Vector6d curve(double t) {
+GripperPose curve(double t)
+{
   double alpha = t / endTime;  // run from 0 to 1
   double beta = 2*alpha - 1;      // run from -1 to 1
 
-  Eigen::Vector6d result;
-  result << 0, 0, 0, 0, 0, 0;
+  GripperPose result;
 
   // specify function in cm
-  result[0] = -alpha * 50;          // x
-  result[1] = -sin(M_PI*alpha)*10.0;          // y
-  result[2] = 0;  // z
+  result.position[0] = -alpha * 50;          // x
+  result.position[1] = -sin(M_PI*alpha)*10.0;          // y
+  result.position[2] = 0;  // z
 
   // transform from centi-meters to meters
-  result *= 1e-2;
+  result.position *= 1e-2;
 
   // no angle change
-  result[3] = 0;   // roll
-  result[4] = 0; //alpha*10 / 180.0 * M_PI;   // pitch
-  result[5] = 0;   // yaw
+  result.rotation = Eigen::Quaterniond::Identity();
 
   return result;
 }
 
-int main() {
+int main()
+{
+  std::cout << "start";
+
+  GripperPose restingPose;
+  restingPose.position << 0.257329, -0.332922, 0.289701;
+
+  const double samplingTimestepWidth = 1e-3;
+
+   SmoothCurveTrajectory curveTrajectory(restingPose, curve, endTime, samplingTimestepWidth);
+
+  // move along trajectory
+  auto curveMotionIterator = std::make_unique<TrajectoryIteratorCartesianVelocity>(curveTrajectory);
+
+  for (int i = 0; i < 50; i++)
+  {
+    curveMotionIterator->step();
+    std::array<double, 6> velocity = curveMotionIterator->getCartesianVelocity();
+    std::cout << "i = " << i << ", velocity: [" << velocity[0] << "," << velocity[1] << "," << velocity[2] << "] [" << velocity[3] << "," << velocity[4] << "," << velocity[5] << "]" << std::endl;
+  }
+
+  GripperPose endPose;
+  endPose.position << 0.557329, -0.232922, 0.3;
+  endPose.rotation = PegInHoleTrajectory::rotateHorizontal();
+  LinearTrajectory linearTrajectory(restingPose, endPose, 0.5, 0.5, samplingTimestepWidth);
+
+  // move along trajectory
+  auto curveMotionIterator2 = std::make_unique<TrajectoryIteratorCartesianVelocity>(linearTrajectory);
+
+  for (int i = 0; i < 50; i++)
+  {
+    curveMotionIterator2->step();
+    std::array<double, 6> velocity = curveMotionIterator2->getCartesianVelocity();
+    std::cout << "i = " << i << ", velocity: [" << velocity[0] << "," << velocity[1] << "," << velocity[2] << "] [" << velocity[3] << "," << velocity[4] << "," << velocity[5] << "]" << std::endl;
+  }
 
   std::cout << "connect to robot " << std::endl;
   franka::Robot panda(robot_ip);
 
-  try {
-
+  try
+  {
     // connect to robot
     setDefaultBehaviour(panda);
 
     // read current robot state
     franka::RobotState initialState = panda.readOnce();
-    Eigen::Vector6d initialPose = homogeneousTfArray2PoseVec(initialState.O_T_EE);
-    std::cout << "initial pose: " << initialPose.transpose() << std::endl; 
+    GripperPose initialPose(initialState.O_T_EE);
+    std::cout << "initial pose: " << initialPose.position.transpose() << std::endl;
     
     // calculate resting pose
-    Eigen::Vector6d restingPose;
-    const double epsilon = 1e-5;
-    //restingPose << 0.209435, -0.470376, 0.5, initialPose[3], initialPose[4], initialPose[5];
-    //restingPose <<  0.40, -0.20,   0.5, epsilon, -M_PI+epsilon, M_PI-epsilon;
-    restingPose << 0.257329,  -0.332922,   0.289701  , initialPose[3], initialPose[4], initialPose[5];
-    //restingPose <<  0.329806,  -0.376262,   0.22, initialPose[3], initialPose[4], initialPose[5];
+    GripperPose restingPose;
+    //restingPose.position << 0.209435, -0.470376, 0.5;
+    //restingPose.position <<  0.40, -0.20,   0.5;
+    restingPose.position << 0.257329,  -0.332922,   0.289701;
+    //restingPose.position <<  0.329806,  -0.376262,   0.22;
     
     // LinearTrajectory and TrajectoryIteratorCartesianVelocity object creation
     LinearTrajectory linearTrajectory(initialPose, restingPose, 0.5, 0.5, 1.e-3);
@@ -75,19 +107,15 @@ int main() {
     panda.control(*motionIterator,
                   /*controller_mode = */ franka::ControllerMode::kCartesianImpedance);
     
-
     // read current pose for debugging
     franka::RobotState currentState = panda.readOnce();
-    Eigen::Vector6d currentPose = homogeneousTfArray2PoseVec(currentState.O_T_EE);
+    GripperPose currentPose(currentState.O_T_EE);
 
-    std::cout << "current pose: " << currentPose.transpose() << std::endl << std::endl;
+    std::cout << "current pose: " << currentPose.position.transpose() << std::endl << std::endl;
 
     // define trajectory from resting pose along curve
-
-    // initialize curve smoothener
     const double samplingTimestepWidth = 1e-3;
-    CurveSmoothener::initialize(curve, endTime);
-    CurveTrajectory curveTrajectory(restingPose, CurveSmoothener::smoothCurve, endTime, samplingTimestepWidth);
+    SmoothCurveTrajectory curveTrajectory(restingPose, curve, endTime, samplingTimestepWidth);
 
     // move along trajectory
     auto curveMotionIterator = std::make_unique<TrajectoryIteratorCartesianVelocity>(curveTrajectory);
@@ -99,13 +127,19 @@ int main() {
     panda.control(*curveMotionIterator,
                   /*controller_mode = */ franka::ControllerMode::kCartesianImpedance);
 
-  } catch (const franka::Exception &e) {
+  }
+  catch (const franka::Exception &e)
+  {
     std::cout << e.what() << std::endl;
     return -1;
-  } catch (const std::invalid_argument &e) {
+  }
+  catch (const std::invalid_argument &e)
+  {
     std::cout << e.what() << std::endl;
     return -2;
-  } catch (const std::exception &e) {
+  }
+  catch (const std::exception &e)
+  {
     std::cout << e.what() << std::endl;
     return -10;
   }
@@ -116,7 +150,8 @@ int main() {
   return 0;
 }
 
-void setDefaultBehaviour(franka::Robot &robot) {
+void setDefaultBehaviour(franka::Robot &robot)
+{
   const double safetyFactor = 1.0;     // seems to have no effect at all
 
   const double torqueContactAcceleration =    safetyFactor * 30;     //20
@@ -147,7 +182,4 @@ void setDefaultBehaviour(franka::Robot &robot) {
   const double impedance_scaling_factor = 1.0;  // don't change
   robot.setJointImpedance({{3000*impedance_scaling_factor, 3000*impedance_scaling_factor, 3000*impedance_scaling_factor, 2500*impedance_scaling_factor, 2500*impedance_scaling_factor, 2000*impedance_scaling_factor, 2000*impedance_scaling_factor}});
   robot.setCartesianImpedance({{3000*impedance_scaling_factor, 3000*impedance_scaling_factor, 3000*impedance_scaling_factor, 300*impedance_scaling_factor, 300*impedance_scaling_factor, 300*impedance_scaling_factor}});
-
-
-  
 }

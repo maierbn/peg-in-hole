@@ -7,30 +7,13 @@ namespace Eigen {
 /// 6d vector representation (used for [x,y,z,roll_x,pitch_y,yaw_z])
 typedef Matrix<double, 6, 1> Vector6d;
 
-/// Matrix with 6 rows stored colwise (fast colwise access)
+/// 7d vector representation (used for [x,y,z,qx,qy,qz,qw])
+typedef Matrix<double, 7, 1> Vector7d;
+
+/// Matrix with 6 rows stored column-major, on column can be a pose velocity in [x,y,z,roll_x,pitch_y,yaw_z]
 typedef Matrix<double, 6, Eigen::Dynamic, Eigen::ColMajor> Matrix6dynd;
 
+/// Matrix with 7 rows stored column-major, on column can be a pose velocity in [x,y,z,qx,qy,qz,qw]
+typedef Matrix<double, 7, Eigen::Dynamic, Eigen::ColMajor> Matrix7dynd;
+
 } // namespace Eigen
-
-
-/** \brief convert Franka's homogeneous transformation (std::array) to a 7D pose with [x,y,z,
- * qw,qx,qy,qz].
- *
- * \arg[in] 16 dimensional array (flattened homogeneous transformation)
- * \returns 76d pose vector with 3 cartesian positions and 4 quaternion rotations
- */
-Eigen::Vector6d homogeneousTfArray2PoseVec(const std::array<double, 16> &pose_TF_as_array);
-
-/** \brief convert a 6D pose with [x,y,z, roll,pitch,yaw] to Franka's homogeneous transformation
- * (std::array)
- *
- * \arg[in] pose the 6 d pose (3 translations, 3 rpy rotations)
- * \returns 16 dimensional array (flattened homogeneous transformation)
- *
- * \warning The rotations are constrained to get a reproducible construction, i.e.
- *          roll_x \in [0,π], pitch_y \in [-π, π], yaw_z \in [-π, π].
- *
- * \todo change rotations to less constrained ones
- */
-//std::array<double, 16> poseVec2HomogeneousTfArray(const Eigen::Vector6d &pose);
-

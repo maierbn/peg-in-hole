@@ -1,15 +1,13 @@
 #pragma once
 
-#include "path.h"
-#include "motion_profile.h"
-#include "trajectory.h"
-
 #include <franka/control_types.h>
 #include <franka/robot_state.h>
 #include <franka/duration.h>
 
 #include <memory>
 #include <array>
+
+#include "trajectory/trajectory.h"
 
 /** \brief General iterator for cartesian paths, providing methods for obtaining pose, poseVelovity
  * and iterate one time step.
@@ -29,7 +27,7 @@ public:
    * \note the return value will be the same, until step() is called.
    *
    */
- // std::array<double, 16> getCartesianPose() const;
+  std::array<double, 16> getCartesianPose() const;
 
   /** \brief get current cartesian velocities
    *
@@ -51,14 +49,14 @@ public:
    * step width dt.
    *
    * \returns the current time [s].  */
-  double getCurrentTime() const;
+  double currentTime() const;
 
   /** \brief get the precalculated end time of the current trajectory.
    *
    * This can be used to compare, if the tajectory is finished already, i.e.
    *
    * ```{.cpp}
-   * if (getCurrentTime() <= getEndTime()){
+   * if (currentTime() <= getEndTime()){
    *  std::cout<<"We are before the trajectory's end."<<std::endl;
    * }else{
    *  std::cout<<"End of trajectory is reached."<<std::endl;
@@ -72,20 +70,20 @@ public:
 protected:
   /// column-wise storage of precalculated poses for the whole trajectory (end effector in
   /// robot base coordinate system).
-  Eigen::Matrix6dynd p_t;
+  Eigen::Matrix7dynd poses_;
 
   /// column-wise storage of precalculated pose velocities for the whole trajectory (end effector in
   /// robot base coordinate system).
-  Eigen::Matrix6dynd dp_dt;
+  Eigen::Matrix6dynd poseVelocitiesEulerAngles_;
 
   /// step size between time steps [s]
-  const double dt;
+  const double dt_;
 
   // end time of the trajcectory. Assuming it starts at 0 and progresses constantly with dt [s]
-  const double t_E;
+  const double endTime_;
 
   /// current iteration number
-  Eigen::Index itr;
+  Eigen::Index currentIndex_;
 
   // current time of robot
   double currentTime_; 

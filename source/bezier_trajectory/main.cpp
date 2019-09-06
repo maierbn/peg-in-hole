@@ -36,11 +36,17 @@ GripperPose curve(double t)
   // no angle change
   result.rotation = Eigen::Quaterniond::Identity();
 
+  
+  Eigen::AngleAxisd angle(M_PI_2*alpha, Eigen::Vector3d::UnitX());
+  result.rotation = Eigen::Quaterniond(angle);
+  //result.rotation = Eigen::Quaterniond::Identity();
+
   return result;
 }
 
 int main()
 {
+  /*
   std::cout << "start";
 
   GripperPose restingPose;
@@ -74,7 +80,7 @@ int main()
     std::array<double, 6> velocity = curveMotionIterator2->getCartesianVelocity();
     std::cout << "i = " << i << ", velocity: [" << velocity[0] << "," << velocity[1] << "," << velocity[2] << "] [" << velocity[3] << "," << velocity[4] << "," << velocity[5] << "]" << std::endl;
   }
-
+*/
   std::cout << "connect to robot " << std::endl;
   franka::Robot panda(robot_ip);
 
@@ -92,11 +98,15 @@ int main()
     GripperPose restingPose;
     //restingPose.position << 0.209435, -0.470376, 0.5;
     //restingPose.position <<  0.40, -0.20,   0.5;
-    restingPose.position << 0.257329,  -0.332922,   0.289701;
+    restingPose.position << 0.257329,  -0.332922,   0.389701;
+
+    //Eigen::AngleAxisd angle(M_PI_2, Eigen::Vector3d::UnitX());
+    //restingPose.rotation = Eigen::Quaterniond(angle);
+    //restingPose.rotation.normalize();
     //restingPose.position <<  0.329806,  -0.376262,   0.22;
     
     // LinearTrajectory and TrajectoryIteratorCartesianVelocity object creation
-    LinearTrajectory linearTrajectory(initialPose, restingPose, 0.5, 0.5, 1.e-3);
+    LinearTrajectory linearTrajectory(initialPose, restingPose, 0.1, 0.1, 1.e-3);
     
     // move to resting pose
     auto motionIterator = std::make_unique<TrajectoryIteratorCartesianVelocity>(linearTrajectory);

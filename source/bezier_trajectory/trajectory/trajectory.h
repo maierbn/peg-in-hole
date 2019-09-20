@@ -14,12 +14,12 @@ class Trajectory {
 public:
   virtual ~Trajectory() {}
 
-  /** \brief interface to get the pose values column-wise for the whole trajectory, sampled with dt, rotation as quaternions
+  /** \brief interface to get the pose values column-wise for the whole trajectory, sampled with dt, orientation as quaternions
    */
   virtual Eigen::Matrix7dynd poses() const = 0;
 
   /** \brief interface to get the pose velocity values column-wise for the whole trajectory, sampled
-   * with dt, rotations as Euler angles */
+   * with dt, orientations as Euler angles */
   virtual Eigen::Matrix6dynd poseVelocities() const = 0;
 
   /** \brief interface to get sample period dt [s] */

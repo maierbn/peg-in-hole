@@ -18,11 +18,14 @@ public:
    * \arg[in] endTime duration of the trajectory
    * \arg[in] dt the discretization step width [s].
    */
-  PegInHoleTrajectory(GripperPose initialPose, GripperPose targetPose, double initialAngle, Eigen::Vector3d controlPoint,
+  PegInHoleTrajectory(Eigen::Vector3d initialPosition, double initialAngle, Eigen::Vector2d targetPoint, Eigen::Vector3d controlPoint,
                                          double endTime, double dt);
 
-  //! rotation to horizontal gripper position
+  //! orientation to horizontal gripper position
   static Eigen::Quaterniond rotateHorizontal();
+
+  //! get initial orientation
+	Eigen::Quaterniond initialOrientation(double initialAngle);
 private:
 
 	/**
@@ -42,4 +45,6 @@ private:
 	 * @return (n over i) * (1-t)^n-i * t^i
 	 */
 	static double bernstein(int i, double t);
+
+	double initialAngle_;  ///< starting angle against horizontal plane
 };

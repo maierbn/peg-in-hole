@@ -9,29 +9,28 @@ LinearTrajectory::LinearTrajectory(const GripperPose &startPose, const GripperPo
 {
   // compute length of trajectory
   length_ = (endPose_.position - startPose_.position).norm();
-
-  std::cout << "Linear trajectory has end time " << endTime() << "." << std::endl;
 }
 
 Eigen::Matrix7dynd LinearTrajectory::poses() const
 {
+  // this method is called at the beginning of TrajectoryIterator, the result is only used if it is pose controlled
+
   // get smooth motion profile for dt
   Eigen::VectorXd motionProfileValues = SmoothMotionProfile::s_t(vMax_, aMax_, length_, dt_);
 
   int nValues = motionProfileValues.size();
-  std::cout << "LinearTrajectory::poses nSteps: " << nValues << std::endl;
   Eigen::Matrix7dynd poses(7,nValues);
 
   // set translation values
   Eigen::Vector3d direction = endPose_.position - startPose_.position;
   poses.topRows<3>() = startPose_.position * Eigen::VectorXd::Ones(nValues).transpose() + direction * motionProfileValues.transpose();
 
-  // set rotation values
+  // set orientation values
   for (int i = 0; i < nValues; i++)
   {
     double alpha = i/(nValues-1);
 
-    poses.col(i).tail<4>() = startPose_.rotation.slerp(alpha, endPose_.rotation).coeffs();
+    poses.col(i).tail<4>() = startPose_.orientation.slerp(alpha, endPose_.orientation).coeffs();
   }
 
   return poses;
@@ -42,39 +41,48 @@ Eigen::Matrix6dynd LinearTrajectory::poseVelocities() const
   // get smooth motion profile for dt
   Eigen::VectorXd motionProfileDerivatives = SmoothMotionProfile::ds_dt(vMax_, aMax_, length_, dt_);
 
+  // initialize result matrix
   int nValues = motionProfileDerivatives.size();
-  std::cout << "LinearTrajectory::poseVelocities nSteps: " << nValues << std::endl;
   Eigen::Matrix6dynd poseVelocities(6,nValues);
 
+  std::cout << std::endl;
+  std::cout << "LinearTrajectory" << std::endl;
+  std::cout << "    from: " << startPose_ << std::endl;
+  std::cout << "      to: " << endPose_ << std::endl;
+  std::cout << "  length: " << length_ << " m, duration: " << endTime() << " s, " << nValues << " steps." << std::endl;
+  std::cout << std::endl;
+
+
   // get constant derivative of the trajectory without motion profile
-  Eigen::Vector6d trajectoryDerivative;
-  Eigen::Vector3d direction = endPose_.position - startPose_.position;
-  trajectoryDerivative.head<3>() = direction / endTime();
-
-#ifndef NDEBUG
-  std::cout << "rotation from " << startPose_.rotation.coeffs().transpose()
-    << " (" << startPose_.rotation.toRotationMatrix().eulerAngles(0, 1, 2).transpose() / M_PI * 180. << ") to "
-    << endPose_.rotation.coeffs().transpose()
-    << " (" << endPose_.rotation.toRotationMatrix().eulerAngles(0, 1, 2).transpose() / M_PI * 180. << ") " << std::endl;
-
-  Eigen::Quaterniond rotation = startPose_.rotation.slerp(1.0, endPose_.rotation);
-
-  std::cout << "resulting rotation: " << rotation.coeffs().transpose()
-    << " (" << rotation.toRotationMatrix().eulerAngles(0, 1, 2).transpose() / M_PI * 180. << ") " << std::endl;
-#endif
-
-  double alpha = 0.5;
-  double inverseAlpha = 1./alpha;
-  trajectoryDerivative.tail<3>() = startPose_.rotation.slerp(alpha, endPose_.rotation).toRotationMatrix().eulerAngles(0, 1, 2);
-  trajectoryDerivative.tail<3>() *= inverseAlpha / endTime();
-
-#ifndef NDEBUG
-  std::cout << "trajectoryDerivative: " << trajectoryDerivative.transpose() << std::endl;
-#endif
+  Eigen::Vector6d trajectoryDerivative = startPose_.getDifferenceTo(endPose_);
 
   // compute the pose velocities as derivative of the linear path times the derivative of the smooth motion profile,
   // column vector * row vector = matrix where each column is for one timestep.
+  
   poseVelocities = trajectoryDerivative * motionProfileDerivatives.transpose();
+
+  // output for debugging, disabled
+#if 0
+  std::cout << "trajectoryDerivative: " << trajectoryDerivative.transpose() << std::endl;
+  // check motion profile
+  double s = 0;
+  for (int i = 0; i < nValues; i++)
+  {
+    s += motionProfileDerivatives[i] * dt_;
+    if (i % 100 == 0)
+      std::cout << "i: " << i << ", t: " << i*dt_ << ", dt: " << dt_ << ", derivative: " << motionProfileDerivatives[i] << ", s: " << s << std::endl;
+  }
+  std::cout << std::endl;
+
+  // check of poseVelocities
+  Eigen::Vector6d currentPose = startPose_.getVector6d();
+  for (int i = 0; i < nValues; i++)
+  {
+    currentPose += dt_ * poseVelocities.col(i);
+    if (i % 100 == 0)
+      std::cout << "i: " << i << ", t: " << i*dt_ << ", dt: " << dt_ << ", derivative: " << poseVelocities.col(i).transpose() << ", pose: " << currentPose.transpose() << std::endl;
+  }
+#endif
 
   return poseVelocities;
 }

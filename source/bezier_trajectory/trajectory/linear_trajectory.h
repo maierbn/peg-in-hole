@@ -23,7 +23,7 @@ class LinearTrajectory : public Trajectory
 {
 public:
 
-  /** \brief create a linear trajectory with smooth motion profile between two points with rotations (end effector in
+  /** \brief create a linear trajectory with smooth motion profile between two points with orientations (end effector in
    * robot base coordinate system).
    *
    * \arg[in] startPose starting pose (could be obtained from the robot directly before creation)
@@ -50,8 +50,8 @@ public:
 
 protected:
 
-  GripperPose startPose_;    ///< the starting point and rotation
-  GripperPose endPose_;      ///< the end point and rotation of the trajectory
+  GripperPose startPose_;    ///< the starting point and orientation
+  GripperPose endPose_;      ///< the end point and orientation of the trajectory
 
   double vMax_;     //< maximum allowed velocity
   double aMax_;    //< maximum allowed acceleration

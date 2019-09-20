@@ -9,6 +9,10 @@ const Eigen::Vector4d SmoothMotionProfile::a_d_mult(4., 5., 6., 7.);
 double SmoothMotionProfile::endTime(double vMax_allowed, double aMax_allowed, double L,
                                         double dt) {
   double t_E = std::max(p_v_max * L / vMax_allowed, sqrt(p_a_max * L / aMax_allowed)); // end time
+  
+  // at least 2s
+  t_E = std::max(2.0, t_E);
+
   return ceil(t_E / dt) * dt; // round t_E to whole dt steps number
 }
 

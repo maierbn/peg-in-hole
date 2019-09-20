@@ -16,8 +16,8 @@ std::array<double, 16> TrajectoryIteratorCartesian::getCartesianPose() const
   Eigen::Isometry3d transformation = Eigen::Isometry3d::Identity();
   transformation.translation() = currentPose.head<3>();
 
-  Eigen::Quaterniond rotation(currentPose[6], currentPose[3], currentPose[4], currentPose[5]);  // qw,qx,qy,qz
-  transformation.rotate(rotation);
+  Eigen::Quaterniond orientation(currentPose[6], currentPose[3], currentPose[4], currentPose[5]);  // qw,qx,qy,qz
+  transformation.rotate(orientation);
 
   std::array<double, 16> result;
   Eigen::Matrix<double, 4, 4, Eigen::ColMajor>::Map(result.data()) = transformation.matrix();
@@ -49,11 +49,9 @@ double TrajectoryIteratorCartesian::getEndTime() const
   return this->endTime_;
 }
 
-franka::CartesianVelocities TrajectoryIteratorCartesianVelocity::
+franka::CartesianPose TrajectoryIteratorCartesian::
 operator()(const franka::RobotState &, franka::Duration time_step)
 {
-  franka::CartesianVelocities cartesianVelDes = franka::CartesianVelocities(getCartesianVelocity());
-  
   currentTime_ += time_step.toSec();
 
   int i = 0;
@@ -76,18 +74,8 @@ operator()(const franka::RobotState &, franka::Duration time_step)
   }
 
   if (currentTime() < getEndTime()) {
-    if (false)
-    {
-      std::cout << "t: " << currentTime_ << ", cartVelocity: " 
-        << "  vx: " << cartesianVelDes.O_dP_EE[0] << "," 
-        << "  vy: " << cartesianVelDes.O_dP_EE[1] << "," 
-        << "  vz: " << cartesianVelDes.O_dP_EE[2] << "," 
-        << "  omegax: " << cartesianVelDes.O_dP_EE[3] << "," 
-        << "  omegay: " << cartesianVelDes.O_dP_EE[4] << "," 
-        << "  omegaz: " << cartesianVelDes.O_dP_EE[5] << std::endl;
-    }
-    return cartesianVelDes;
+    return franka::CartesianPose(getCartesianPose());
   } else {
-    return franka::MotionFinished(cartesianVelDes);
+    return franka::MotionFinished(franka::CartesianPose(getCartesianPose()));
   }
 }

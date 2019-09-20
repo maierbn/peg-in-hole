@@ -1,4 +1,4 @@
-#include "trajectory_utility/trajectory_iterator.h"
+#include "trajectory_utility/trajectory_iterator_velocity.h"
 #include "trajectory/linear_trajectory.h"
 #include "trajectory/curve_trajectory.h"
 #include "trajectory/smooth_curve_trajectory.h"
@@ -15,7 +15,7 @@ const std::string robot_ip = "172.16.0.2";
 
 void setDefaultBehaviour(franka::Robot &robot);
 
-const double endTime = 5.0;    // duration of the trajectory curve(t), t ∈ [0,endTime]
+const double endTime = 15.0;    // duration of the trajectory curve(t), t ∈ [0,endTime]
 
 /** example curve function used for the trajectory */
 GripperPose curve(double t)
@@ -34,53 +34,17 @@ GripperPose curve(double t)
   result.position *= 1e-2;
 
   // no angle change
-  result.rotation = Eigen::Quaterniond::Identity();
-
+  result.orientation = GripperPose::neutralOrientation;
   
   Eigen::AngleAxisd angle(M_PI_2*alpha, Eigen::Vector3d::UnitX());
-  result.rotation = Eigen::Quaterniond(angle);
-  //result.rotation = Eigen::Quaterniond::Identity();
+  result.orientation = GripperPose::neutralOrientation * Eigen::Quaterniond(angle);
+  //result.orientation = Eigen::Quaterniond::Identity();
 
   return result;
 }
 
 int main()
 {
-  /*
-  std::cout << "start";
-
-  GripperPose restingPose;
-  restingPose.position << 0.257329, -0.332922, 0.289701;
-
-  const double samplingTimestepWidth = 1e-3;
-
-   SmoothCurveTrajectory curveTrajectory(restingPose, curve, endTime, samplingTimestepWidth);
-
-  // move along trajectory
-  auto curveMotionIterator = std::make_unique<TrajectoryIteratorCartesianVelocity>(curveTrajectory);
-
-  for (int i = 0; i < 50; i++)
-  {
-    curveMotionIterator->step();
-    std::array<double, 6> velocity = curveMotionIterator->getCartesianVelocity();
-    std::cout << "i = " << i << ", velocity: [" << velocity[0] << "," << velocity[1] << "," << velocity[2] << "] [" << velocity[3] << "," << velocity[4] << "," << velocity[5] << "]" << std::endl;
-  }
-
-  GripperPose endPose;
-  endPose.position << 0.557329, -0.232922, 0.3;
-  endPose.rotation = PegInHoleTrajectory::rotateHorizontal();
-  LinearTrajectory linearTrajectory(restingPose, endPose, 0.5, 0.5, samplingTimestepWidth);
-
-  // move along trajectory
-  auto curveMotionIterator2 = std::make_unique<TrajectoryIteratorCartesianVelocity>(linearTrajectory);
-
-  for (int i = 0; i < 50; i++)
-  {
-    curveMotionIterator2->step();
-    std::array<double, 6> velocity = curveMotionIterator2->getCartesianVelocity();
-    std::cout << "i = " << i << ", velocity: [" << velocity[0] << "," << velocity[1] << "," << velocity[2] << "] [" << velocity[3] << "," << velocity[4] << "," << velocity[5] << "]" << std::endl;
-  }
-*/
   std::cout << "connect to robot " << std::endl;
   franka::Robot panda(robot_ip);
 
@@ -92,36 +56,26 @@ int main()
     // read current robot state
     franka::RobotState initialState = panda.readOnce();
     GripperPose initialPose(initialState.O_T_EE);
-    std::cout << "initial pose: " << initialPose.position.transpose() << std::endl;
+    std::cout << "current pose: " << initialPose << std::endl;
     
     // calculate resting pose
     GripperPose restingPose;
-    //restingPose.position << 0.209435, -0.470376, 0.5;
-    //restingPose.position <<  0.40, -0.20,   0.5;
-    restingPose.position << 0.257329,  -0.332922,   0.389701;
-
-    //Eigen::AngleAxisd angle(M_PI_2, Eigen::Vector3d::UnitX());
-    //restingPose.rotation = Eigen::Quaterniond(angle);
-    //restingPose.rotation.normalize();
-    //restingPose.position <<  0.329806,  -0.376262,   0.22;
+    restingPose.position <<  0.317125, -0.38625, 0.367743;
     
     // LinearTrajectory and TrajectoryIteratorCartesianVelocity object creation
-    LinearTrajectory linearTrajectory(initialPose, restingPose, 0.1, 0.1, 1.e-3);
-    
-    // move to resting pose
+    LinearTrajectory linearTrajectory(initialPose, restingPose, 0.2, 0.2, 1.e-3);
     auto motionIterator = std::make_unique<TrajectoryIteratorCartesianVelocity>(linearTrajectory);
     
+    // move to resting pose
     std::cout << " Robot will move to resting pose, press Enter.";
     std::cin.get();
-
-    panda.control(*motionIterator,
-                  /*controller_mode = */ franka::ControllerMode::kCartesianImpedance);
+    panda.control(*motionIterator, /*controller_mode = */ franka::ControllerMode::kCartesianImpedance);
     
     // read current pose for debugging
     franka::RobotState currentState = panda.readOnce();
     GripperPose currentPose(currentState.O_T_EE);
 
-    std::cout << "current pose: " << currentPose.position.transpose() << std::endl << std::endl;
+    std::cout << "current pose: " << currentPose << std::endl << std::endl;
 
     // define trajectory from resting pose along curve
     const double samplingTimestepWidth = 1e-3;

@@ -47,7 +47,7 @@ protected:
   double endTime_;  // duration of trajectory
   double dt_;  // timstep width or sampling width of the trajectory
   GripperPose initialPose_;  // initial pose from where to start trajectory
-  GripperPose curveStartPos_;   // initial point of the curve
+  GripperPose curveStartPose_;   // initial point of the curve
 
   std::function<GripperPose (double t)> curve_;   // curve that describes the trajectory
 };

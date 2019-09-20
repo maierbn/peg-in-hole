@@ -1,50 +1,73 @@
 #include "peg_in_hole_trajectory.h"
 
-PegInHoleTrajectory::PegInHoleTrajectory(GripperPose initialPose, GripperPose targetPose, double initialAngle, Eigen::Vector3d controlPoint,
+#include <iostream>
+
+PegInHoleTrajectory::PegInHoleTrajectory(Eigen::Vector3d initialPosition, double initialAngle, Eigen::Vector2d targetPoint, Eigen::Vector3d controlPoint,
                                          double endTime, double dt) :
-  SmoothCurveTrajectory(initialPose,
-    [&](double t) -> GripperPose
+  SmoothCurveTrajectory(GripperPose(initialPosition, initialOrientation(initialAngle)),
+    [initialPosition, initialAngle, targetPoint, controlPoint, endTime](double time) -> GripperPose
     {
+      double t = time/endTime;
+
       // determine control points for translation
-      Eigen::Vector3d controlPoint0 = initialPose.position;
+      Eigen::Vector3d controlPoint0 = initialPosition;
 
       Eigen::Vector3d controlPoint1;
-      controlPoint1[0] = -controlPoint[0];   // x
-      controlPoint1[1] = initialPose.position[1];   // y
-      controlPoint1[2] = controlPoint[1];   // z
+      controlPoint1[0] = initialPosition[0];   // x
+      controlPoint1[1] = initialPosition[1] - controlPoint[0];   // y
+      controlPoint1[2] = initialPosition[2] + controlPoint[1];   // z
 
-      Eigen::Vector3d controlPoint2 = targetPose.position;
-      controlPoint2[1] = initialPose.position[1];   // y
+      Eigen::Vector3d controlPoint2;
+      controlPoint2[0] = initialPosition[0];   // x
+      controlPoint2[1] = initialPosition[1] - targetPoint[0];   // y
+      controlPoint2[2] = initialPosition[2] + targetPoint[1];   // z
 
       // compute translation
       GripperPose result;
       result.position = controlPoint0 * bernstein(0,t) + controlPoint1 * bernstein(1,t) + controlPoint2 * bernstein(2,t);
 
-      // compute rotation
+      // compute orientation
       double angle0 = initialAngle;
       double angle1 = controlPoint[2];
       double angle2 = 0;
 
       double angle = angle0 * bernstein(0,t) + angle1 * bernstein(1,t) + angle2 * bernstein(2,t);
 
-      Eigen::AngleAxisd angleAxis(angle, -Eigen::Vector3d::UnitY());
+      // linear trajectory for debugging
+      //result.position = initialPosition + t * (-initialPosition+controlPoint2);
+      
+      Eigen::AngleAxisd angleAxis(angle, -Eigen::Vector3d::UnitX());
       Eigen::Quaterniond q(angleAxis);
 
-      result.rotation = PegInHoleTrajectory::rotateHorizontal() * q;
-      result.rotation.normalize();
+      result.orientation = q * PegInHoleTrajectory::rotateHorizontal();
+      result.orientation.normalize();
+   
+      //std::cout << "endTime: " << endTime << ", t: " << t << ", " << result << std::endl;
 
       return result;
     },
     endTime, dt
-  )
+  ), initialAngle_(initialAngle)
 {
 }
 
 Eigen::Quaterniond PegInHoleTrajectory::rotateHorizontal()
 {
   // TODO: try out
-  Eigen::AngleAxisd angle(M_PI_2, -Eigen::Vector3d::UnitY());
-  return Eigen::Quaterniond(angle);
+  Eigen::AngleAxisd angle(M_PI_2, -Eigen::Vector3d::UnitX());
+  return Eigen::Quaterniond(angle) * GripperPose::neutralOrientation;
+}
+
+Eigen::Quaterniond PegInHoleTrajectory::initialOrientation(double initialAngle)
+{
+  Eigen::Quaterniond initialOrientation;
+  Eigen::AngleAxisd angleAxis(initialAngle, -Eigen::Vector3d::UnitX());
+  Eigen::Quaterniond q(angleAxis);
+
+  initialOrientation = q * PegInHoleTrajectory::rotateHorizontal();
+  initialOrientation.normalize();
+
+  return initialOrientation;
 }
 
 /**

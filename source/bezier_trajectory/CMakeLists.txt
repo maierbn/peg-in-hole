@@ -12,6 +12,7 @@ add_library(trajectory_planner
   trajectory_utility/smooth_motion_profile.cpp
   trajectory_utility/curve_smoothener.cpp
   trajectory_utility/trajectory_iterator.cpp
+  trajectory_utility/trajectory_iterator_velocity.cpp
 
   gripper_pose.cpp
   kbhit.cpp
@@ -23,3 +24,8 @@ target_include_directories(trajectory_planner PUBLIC .)
 add_executable(${PROJECT_NAME} main.cpp)
 target_link_libraries(${PROJECT_NAME} trajectory_planner Franka::Franka)
 target_include_directories(${PROJECT_NAME} PUBLIC trajectory)
+
+
+add_executable(peg_in_hole main_bezier.cpp)
+target_link_libraries(peg_in_hole trajectory_planner Franka::Franka)
+target_include_directories(peg_in_hole PUBLIC trajectory)

@@ -7,7 +7,7 @@
 #include <franka/robot_state.h>
 #include <franka/duration.h>
 
-#include "eigen_utility.h"
+#include "utility/eigen_utility.h"
 
 /** \brief base class for a cartesian trajectory */
 class Trajectory {

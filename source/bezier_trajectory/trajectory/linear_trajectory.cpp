@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "trajectory_utility/smooth_motion_profile.h"
+#include "utility/smooth_motion_profile.h"
 
 LinearTrajectory::LinearTrajectory(const GripperPose &startPose, const GripperPose &endPose, double vMax, double aMax, double dt) :
   startPose_(startPose), endPose_(endPose), vMax_(vMax), aMax_(aMax), dt_(dt)

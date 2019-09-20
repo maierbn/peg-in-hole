@@ -1,4 +1,4 @@
-#include "trajectory_utility/trajectory_iterator_velocity.h"
+#include "utility/trajectory_iterator_velocity.h"
 #include "trajectory/linear_trajectory.h"
 #include "trajectory/curve_trajectory.h"
 #include "trajectory/smooth_curve_trajectory.h"

@@ -8,7 +8,7 @@
 #include <franka/duration.h>
 
 #include "trajectory.h"
-#include "gripper_pose.h"
+#include "utility/gripper_pose.h"
 
 /** \brief implements a cartesian linear trajectory between two points.
  *

@@ -9,13 +9,12 @@ add_library(trajectory_planner
   trajectory/peg_in_hole_trajectory.cpp
   trajectory/smooth_curve_trajectory.cpp
 
-  trajectory_utility/smooth_motion_profile.cpp
-  trajectory_utility/curve_smoothener.cpp
-  trajectory_utility/trajectory_iterator.cpp
-  trajectory_utility/trajectory_iterator_velocity.cpp
-
-  gripper_pose.cpp
-  kbhit.cpp
+  utility/smooth_motion_profile.cpp
+  utility/curve_smoothener.cpp
+  utility/trajectory_iterator.cpp
+  utility/trajectory_iterator_velocity.cpp
+  utility/gripper_pose.cpp
+  utility/kbhit.cpp
 
 )
 target_link_libraries(trajectory_planner Franka::Franka)

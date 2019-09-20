@@ -10,8 +10,8 @@
 #include <franka/duration.h>
 
 #include "curve_trajectory.h"
-#include "gripper_pose.h"
-#include "trajectory_utility/curve_smoothener.h"
+#include "utility/gripper_pose.h"
+#include "utility/curve_smoothener.h"
 
 /** \brief implements a trajectory following an arbitrary curve ∈ ℝ^3
  */

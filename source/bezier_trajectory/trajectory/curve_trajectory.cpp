@@ -2,6 +2,7 @@
 
 #include <iomanip>
 #include <iostream>
+#include <fstream>
 
 CurveTrajectory::CurveTrajectory(const GripperPose initialPose,
   std::function<GripperPose (double t)> curve, double endTime, double dt) :
@@ -20,7 +21,6 @@ Eigen::Matrix7dynd CurveTrajectory::poses() const {
   int nSteps = int(round(endTime_ / dt_));
 
   Eigen::Matrix7dynd poses(7,nSteps);
-
   for (int i = 0; i < nSteps; i++)
   {
     // compute current time
@@ -30,6 +30,69 @@ Eigen::Matrix7dynd CurveTrajectory::poses() const {
     poses.col(i) = position.getVector7d();
   }
 
+  // compute 2D surface coordinates and angle
+  Eigen::Matrix<double, Eigen::Dynamic, 9> positions(nSteps,9);  // [x,y,angle, x',y',angle', x'',y'',angle'']
+  for (int i = 0; i < nSteps; i++)
+  {
+    double x = poses(0,i);  // x
+    double y = poses(1,i);  // y
+
+    Eigen::Quaterniond orientation(poses(6,i), poses(3,i), poses(4,i), poses(5,i));
+    double angle = orientation.toRotationMatrix().eulerAngles(0,1,2)[2];  // angle around z-axis
+
+    positions(i,0) = x;
+    positions(i,1) = y;
+    positions(i,2) = angle;
+
+    //std::cout << "x,y,angle: " << x << ", " << y  << ", " << angle * 180./M_PI << std::endl;
+  }
+
+  // compute first derivatives
+  for (int i = 0; i < nSteps; i++)
+  {
+    int iplus = std::min(i+1,nSteps-1);
+    int iminus = std::max(i-1,0);
+
+    for (int j = 0; j < 3; j++)
+    {
+      positions(i,j+3) = (positions(iplus,j) - positions(iminus,j)) / ((iplus - iminus)*dt_);
+    }
+  }
+  
+  // compute second derivatives
+  for (int i = 0; i < nSteps; i++)
+  {
+    int iplus = std::min(i+1,nSteps-1);
+    int iminus = std::max(i-1,0);
+
+    for (int j = 3; j < 6; j++)
+    {
+      positions(i,j+3) = (positions(iplus,j) - positions(iminus,j)) / ((iplus - iminus)*dt_);
+    }
+  }
+
+  // write positions to file
+  std::string filename = "tube5.csv";
+  std::ofstream file(filename, std::ios::out | std::ios::binary | std::ios::trunc);
+  if (!file.is_open())
+  {
+    std::cout << "Could not open file \"" << filename << "\" for writing." << std::endl;
+    exit(1);
+  }
+   
+  for (int i = 0; i < nSteps; i++)
+  {
+    file << i*dt_;
+    for (int j = 0; j < 9; j++)
+    {
+      file << ",";
+      file << positions(i,j);
+    }
+    file << std::endl;
+  }
+
+  file.close();
+  std::cout << "Wrote x,y,phi to file \"" << filename << "\"." << std::endl;
   return poses;
 }
 
@@ -57,7 +120,7 @@ Eigen::Matrix6dynd CurveTrajectory::poseVelocities() const
     // compute current time
     double t = i*dt_;
 
-    //std::cout << "t: " << t << ", curve(" << t << "): " << curve_(t).position.transpose() << std::endl;
+    //std::cout << "t: " << t << ", curve(" << t << "): " << curve_(t) << std::endl;
 
     // compute velocity by 2nd order central difference quotient
     GripperPose curve0 = curve_(t-h);

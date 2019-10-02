@@ -72,7 +72,7 @@ Eigen::Matrix7dynd CurveTrajectory::poses() const {
   }
 
   // write positions to file
-  std::string filename = "tube5.csv";
+  std::string filename = "out.csv";
   std::ofstream file(filename, std::ios::out | std::ios::binary | std::ios::trunc);
   if (!file.is_open())
   {
@@ -115,6 +115,8 @@ Eigen::Matrix6dynd CurveTrajectory::poseVelocities() const
 
   const double h = 1e-5;   // do not set too small!
 
+  Eigen::Vector6d previousVelocity;
+
   for (int i = 0; i < nSteps; i++)
   {
     // compute current time
@@ -128,6 +130,13 @@ Eigen::Matrix6dynd CurveTrajectory::poseVelocities() const
 
     // compute translational and rotational velocity
     Eigen::Vector6d velocity = curve0.getDifferenceTo(curve1) / (2*h);
+    
+    if ((velocity - previousVelocity).norm() > 1e-2)
+    {
+      velocity = previousVelocity;
+    }
+
+    previousVelocity = velocity;
 
     velocities.col(i) = velocity;
 

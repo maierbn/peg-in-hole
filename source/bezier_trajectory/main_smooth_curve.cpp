@@ -1,8 +1,8 @@
-#include "utility/trajectory_iterator_velocity.h"
+#include "utility/trajectory_iterator_cartesian_velocity.h"
 #include "trajectory/linear_trajectory.h"
 #include "trajectory/curve_trajectory.h"
 #include "trajectory/smooth_curve_trajectory.h"
-#include "trajectory/peg_in_hole_trajectory.h"
+//#include "trajectory/peg_in_hole_trajectory.h"
 
 #include <franka/exception.h>
 #include <franka/robot.h>
@@ -18,7 +18,7 @@ void setDefaultBehaviour(franka::Robot &robot);
 const double endTime = 15.0;    // duration of the trajectory curve(t), t ∈ [0,endTime]
 
 /** example curve function used for the trajectory */
-GripperPose curve(double t)
+CartesianPose curve(double t)
 {
   double alpha = t / endTime;  // run from 0 to 1
 
@@ -29,7 +29,7 @@ GripperPose curve(double t)
 
   double beta = 2*alpha - 1;      // run from -1 to 1
 
-  GripperPose result;
+  CartesianPose result;
 
   const int nPoses = 451;
   const double poses[5][nPoses] = 
@@ -61,7 +61,7 @@ GripperPose curve(double t)
   //result.position *= 1e-2;
 
   // no angle change
-  result.orientation = GripperPose::neutralOrientation;
+  result.orientation = CartesianPose::neutralOrientation;
   
   double theta = currentPose[3];
   double phi = currentPose[4];
@@ -69,7 +69,7 @@ GripperPose curve(double t)
   Eigen::AngleAxisd angle0(M_PI/2. - theta, Eigen::Vector3d::UnitY());
   Eigen::AngleAxisd angle1(phi, Eigen::Vector3d::UnitZ());
 
-  //result.orientation = GripperPose::neutralOrientation * Eigen::Quaterniond(angle0) * Eigen::Quaterniond(angle1);
+  //result.orientation = CartesianPose::neutralOrientation * Eigen::Quaterniond(angle0) * Eigen::Quaterniond(angle1);
   //result.orientation = Eigen::Quaterniond::Identity();
 
   //std::cout << "curve(" << t << "): " << result << std::endl;
@@ -88,11 +88,11 @@ int main()
 
     // read current robot state
     franka::RobotState initialState = panda.readOnce();
-    GripperPose initialPose(initialState.O_T_EE);
+    CartesianPose initialPose(initialState.O_T_EE);
     std::cout << "current pose: " << initialPose << std::endl;
     
     // calculate resting pose
-    GripperPose restingPose;
+    CartesianPose restingPose;
     //restingPose.position <<  0.317125, -0.38625, 0.367743;  // in the air
     restingPose.position <<  0.384663, -0.380291, 0.204745;  // right, above the wooden bottom plate
     restingPose.position <<  -0.0560702, -0.322303, 0.201182;  // center, above the wooden bottom plate
@@ -101,7 +101,7 @@ int main()
     restingPose.position << 0.0325709,-0.332922,0.220434;       // left, above the wooden bottom plate
     restingPose.position[2] += 0.31067;   // move to start position above bottom
    
-    restingPose.orientation = GripperPose::neutralOrientation;
+    restingPose.orientation = CartesianPose::neutralOrientation;
     //restingPose.orientation = Eigen::Quaterniond(0.0, 0.0, 1.0, 0.0); // rotated by 180deg around z axis (such that gripper can rotate ccw)
     /* 
     Eigen::AngleAxisd angle(-M_PI_2, Eigen::Vector3d::UnitZ());
@@ -118,7 +118,7 @@ int main()
     
     // read current pose for debugging
     franka::RobotState currentState = panda.readOnce();
-    GripperPose currentPose(currentState.O_T_EE);
+    CartesianPose currentPose(currentState.O_T_EE);
 
     std::cout << "current pose: " << currentPose << std::endl << std::endl;
 

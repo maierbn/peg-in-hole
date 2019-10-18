@@ -1,7 +1,7 @@
 #pragma once
 
 #include "utility/eigen_utility.h"
-#include "smooth_curve_trajectory.h"
+#include "trajectory/smooth_curve_trajectory.h"
 
 /** \brief implements a trajectory following a bezier trajectory with 3 control points.
  */

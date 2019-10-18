@@ -2,7 +2,7 @@
 #include "trajectory/linear_trajectory.h"
 #include "trajectory/curve_trajectory.h"
 #include "trajectory/smooth_curve_trajectory.h"
-#include "trajectory/bezier_trajectory.h"
+#include "trajectory/peg_in_hole_trajectory.h"
 
 #include <franka/exception.h>
 #include <franka/robot.h>
@@ -25,6 +25,22 @@ int main()
     const double endTime = 15.0;
     const double samplingTimestepWidth = 1e-3;
 
+    // define parameters
+    double initialAngle = 10 / 180. * M_PI;
+
+    Eigen::Vector2d targetPoint;
+    targetPoint << 0.2, 0.1;
+
+    Eigen::Vector3d controlPoint;
+    double controlAngle = 10 / 180. * M_PI;
+    controlPoint << 0.1, 0.3, controlAngle;
+
+    Eigen::Vector3d restingPosition;
+    restingPosition << 0.4, -0.256861, 0.6;
+
+  // Eigen::Vector3d initialPosition, double initialAngle, Eigen::Vector2d targetPoint, Eigen::Vector3d controlPoint, double endTime, double dt
+    PegInHoleTrajectory pegInHoleTrajectory(restingPosition, initialAngle, targetPoint, controlPoint, endTime, samplingTimestepWidth);
+
     // connect to robot
     setDefaultBehaviour(panda);
 
@@ -35,14 +51,13 @@ int main()
     
     // calculate resting pose
     CartesianPose restingPose;
-    restingPose.position <<  0.317125, -0.38625, 0.367743;  // in the air
-    restingPose.position[2] += 0.31067;   // move to start position above bottom
-   
-    restingPose.orientation = CartesianPose::neutralOrientation;
+    restingPose.position = restingPosition;
+    restingPose.orientation = pegInHoleTrajectory.initialOrientation(initialAngle);
     
     // LinearTrajectory and TrajectoryIteratorCartesianVelocity object creation
     LinearTrajectory linearTrajectory(initialPose, restingPose, 0.2, 0.2, 1.e-3);
     auto motionIterator = std::make_unique<TrajectoryIteratorCartesianVelocity>(linearTrajectory);
+    //auto motionIterator = std::make_unique<TrajectoryIteratorCartesian>(linearTrajectory);
     
     // move to resting pose
     std::cout << " Robot will move to resting pose, press Enter.";
@@ -56,17 +71,8 @@ int main()
 
     // define bezier trajectory
 
-    double p = 3;           // polynomial degree
-    double continuity = 1;  // how often continuosly differentiable the curve will be
-
-    std::vector<CartesianPose> poses;
-
-
-    // CartesianPose initialPose, std::vector<CartesianPose> &poses, double p, double continuity, double endTime, double dt
-    BezierTrajectory bezierTrajectory(restingPose, poses, p, continuity, endTime, samplingTimestepWidth);
-
     // move along trajectory
-    auto curveMotionIterator = std::make_unique<TrajectoryIteratorCartesianVelocity>(bezierTrajectory);
+    auto curveMotionIterator = std::make_unique<TrajectoryIteratorCartesianVelocity>(pegInHoleTrajectory);
     
     std::cout << "Robot will move according to trajectory, press Enter." << std::endl 
       << "Afterwards, Enter aborts the movement\a";

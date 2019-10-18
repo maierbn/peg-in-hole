@@ -4,8 +4,8 @@
 
 PegInHoleTrajectory::PegInHoleTrajectory(Eigen::Vector3d initialPosition, double initialAngle, Eigen::Vector2d targetPoint, Eigen::Vector3d controlPoint,
                                          double endTime, double dt) :
-  SmoothCurveTrajectory(GripperPose(initialPosition, initialOrientation(initialAngle)),
-    [initialPosition, initialAngle, targetPoint, controlPoint, endTime](double time) -> GripperPose
+  SmoothCurveTrajectory(CartesianPose(initialPosition, initialOrientation(initialAngle)),
+    [initialPosition, initialAngle, targetPoint, controlPoint, endTime](double time) -> CartesianPose
     {
       double t = time/endTime;
 
@@ -23,7 +23,7 @@ PegInHoleTrajectory::PegInHoleTrajectory(Eigen::Vector3d initialPosition, double
       controlPoint2[2] = initialPosition[2] + targetPoint[1];   // z
 
       // compute translation
-      GripperPose result;
+      CartesianPose result;
       result.position = controlPoint0 * bernstein(0,t) + controlPoint1 * bernstein(1,t) + controlPoint2 * bernstein(2,t);
 
       // compute orientation
@@ -55,7 +55,7 @@ Eigen::Quaterniond PegInHoleTrajectory::rotateHorizontal()
 {
   // TODO: try out
   Eigen::AngleAxisd angle(M_PI_2, -Eigen::Vector3d::UnitX());
-  return Eigen::Quaterniond(angle) * GripperPose::neutralOrientation;
+  return Eigen::Quaterniond(angle) * CartesianPose::neutralOrientation;
 }
 
 Eigen::Quaterniond PegInHoleTrajectory::initialOrientation(double initialAngle)

@@ -55,10 +55,15 @@ CartesianPose curve(double t)
   result.position[1] = currentPose[1]; //-sin(M_PI*alpha)*10.0;          // y
   result.position[2] = currentPose[2];  // z
 
+  
+  result.position[0] = cos(M_PI_2*alpha)*30;          // x
+  result.position[1] = -sin(M_PI_2*alpha)*10;          // y
+  result.position[2] = 0;  // z
+
 //std::cout << "inedx: " << index << ", a: " << a << ", index: " << index << ", currentPose: " << result.position;
 
   // transform from centi-meters to meters
-  //result.position *= 1e-2;
+  result.position *= 1e-2;
 
   // no angle change
   result.orientation = CartesianPose::neutralOrientation;
@@ -112,7 +117,7 @@ int main()
     auto motionIterator = std::make_unique<TrajectoryIteratorCartesianVelocity>(linearTrajectory);
     
     // move to resting pose
-    std::cout << " Robot will move to resting pose, press Enter.";
+    std::cout << " \aRobot will move to resting pose, press Enter.";
     std::cin.get();
     panda.control(*motionIterator, /*controller_mode = */ franka::ControllerMode::kCartesianImpedance);
     
@@ -129,7 +134,7 @@ int main()
     // move along trajectory 
     auto curveMotionIterator = std::make_unique<TrajectoryIteratorCartesianVelocity>(curveTrajectory);
     
-    std::cout << "Robot will move according to trajectory, press Enter." << std::endl 
+    std::cout << "\aRobot will move according to trajectory, press Enter." << std::endl 
       << "Afterwards, Enter aborts the movement\a";
     std::cin.ignore();
 

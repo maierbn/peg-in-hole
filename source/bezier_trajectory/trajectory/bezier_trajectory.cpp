@@ -9,7 +9,7 @@ BezierTrajectory::BezierTrajectory(CartesianPose initialPose, std::vector<Cartes
     {
       double t = time/endTime;
 
-      CartesianPose result = initialPose;
+      CartesianPose result;
       for (int i = 0; i < this->nBasisFunctions_; i++)
       {
         result += poses_[i] * basis(i,p_,t);

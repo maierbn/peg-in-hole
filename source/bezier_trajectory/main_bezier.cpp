@@ -59,8 +59,14 @@ int main()
     double p = 3;           // polynomial degree
     double continuity = 1;  // how often continuosly differentiable the curve will be
 
-    std::vector<CartesianPose> poses;
+    std::vector<CartesianPose> poses(6);
 
+    poses[0] = initialPose;
+    poses[1].position <<  0.2, -0.38625, 0.367743;
+    poses[2].position <<  0.1, -0.38625, 0.3;
+    poses[3].position <<  0.1, -0.38625, 0.28;
+    poses[4].position <<  0.0, -0.38625, 0.22;
+    poses[5].position << -0.1, -0.38625, 0.30;
 
     // CartesianPose initialPose, std::vector<CartesianPose> &poses, double p, double continuity, double endTime, double dt
     BezierTrajectory bezierTrajectory(restingPose, poses, p, continuity, endTime, samplingTimestepWidth);

@@ -10,14 +10,17 @@ add_subdirectory(panda_control_libfranka)
 
 include_directories(PUBLIC panda_control_libfranka/src)
 
-add_executable(${PROJECT_NAME} main_smooth_curve.cpp)
+add_executable(${PROJECT_NAME} 
+  main_smooth_curve.cpp
+  utility/trajectory_plotter.cpp
+)
 target_link_libraries(${PROJECT_NAME} trajectory_planner Franka::Franka)
 target_include_directories(${PROJECT_NAME} PUBLIC trajectory)
 
 # -------------------------
 project(peg_in_hole)
 add_executable(${PROJECT_NAME}
-  main_bezier.cpp 
+  main_peg_in_hole.cpp 
   trajectory/peg_in_hole_trajectory.cpp
   trajectory/bezier_trajectory.cpp
 )

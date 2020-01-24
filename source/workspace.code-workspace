@@ -1,10 +1,10 @@
 {
 	"folders": [
 		{
-			"path": "/store/software/opendihu"
+			"path": "bezier_trajectory/utility"
 		},
 		{
-			"path": "/store/wiss/2019/12_numsim/code"
+			"path": "bezier_trajectory"
 		}
 	],
 	"settings": {

@@ -2,7 +2,7 @@
 #include "trajectory/linear_trajectory.h"
 #include "trajectory/curve_trajectory.h"
 #include "trajectory/smooth_curve_trajectory.h"
-//#include "trajectory/peg_in_hole_trajectory.h"
+#include "utility/trajectory_plotter.h"
 
 #include <franka/exception.h>
 #include <franka/robot.h>
@@ -81,8 +81,36 @@ CartesianPose curve(double t)
   return result;
 }
 
+void debug()
+{
+  CartesianPose restingPose;
+
+  restingPose.position << 0.0325709,-0.332922,0.220434;       // left, above the wooden bottom plate
+  restingPose.position[2] += 0.31067;   // move to start position above bottom
+
+  restingPose.orientation = CartesianPose::neutralOrientation;
+
+  std::cout << "create curveTrajectory" << std::endl;
+
+  // define trajectory from resting pose along curve
+  const double samplingTimestepWidth = 1e-3;
+  SmoothCurveTrajectory curveTrajectory(restingPose, curve, endTime, samplingTimestepWidth);
+
+  std::cout << "plot curveTrajectory" << std::endl;
+  TrajectoryPlotter trajectoryPlotter(restingPose, std::make_shared<SmoothCurveTrajectory>(curveTrajectory), samplingTimestepWidth);
+  trajectoryPlotter.plot();
+
+  std::cout << "create TrajectoryIteratorCartesianVelocity" << std::endl;
+
+  // move along trajectory
+  auto curveMotionIterator = std::make_unique<TrajectoryIteratorCartesianVelocity>(curveTrajectory);
+
+}
+
 int main()
 {
+  debug();
+
   std::cout << "connect to robot " << std::endl;
   franka::Robot panda(robot_ip);
 
@@ -130,6 +158,9 @@ int main()
     // define trajectory from resting pose along curve
     const double samplingTimestepWidth = 1e-3;
     SmoothCurveTrajectory curveTrajectory(restingPose, curve, endTime, samplingTimestepWidth);
+
+    TrajectoryPlotter trajectoryPlotter(restingPose, std::make_shared<SmoothCurveTrajectory>(curveTrajectory), samplingTimestepWidth);
+    trajectoryPlotter.plot();
 
     // move along trajectory 
     auto curveMotionIterator = std::make_unique<TrajectoryIteratorCartesianVelocity>(curveTrajectory);

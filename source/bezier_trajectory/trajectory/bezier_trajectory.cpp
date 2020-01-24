@@ -3,8 +3,7 @@
 #include <iostream>
 
 BezierTrajectory::BezierTrajectory(CartesianPose initialPose, std::vector<CartesianPose> &poses, double p, double continuity, double endTime, double dt) :
-   poses_(poses), p_(p), targetMultiplicity_(p - continuity),
-   SmoothCurveTrajectory(initialPose,
+  SmoothCurveTrajectory(initialPose,
     [initialPose, poses, endTime, this](double time) -> CartesianPose
     {
       double t = time/endTime;
@@ -18,7 +17,7 @@ BezierTrajectory::BezierTrajectory(CartesianPose initialPose, std::vector<Cartes
       return result;
     },
     endTime, dt
-  )
+  ), poses_(poses), p_(p), targetMultiplicity_(p - continuity)
 {
 }
 
@@ -36,7 +35,7 @@ double BezierTrajectory::basis(int i, int n, double x)
   }
     
   // right end
-  if (n == p_ && i == poses_.size()-1 && x >= knotVector_.back())
+  if (n == p_ && i == (int)poses_.size()-1 && x >= knotVector_.back())
   {
     return 1;
   }
@@ -120,7 +119,7 @@ void BezierTrajectory::generateKnotVector()
 
   std::cout << "p: " << p_ << ", multiplicity: " << targetMultiplicity_ << ", nBasisFunctions: " << nBasisFunctions << std::endl;
   std::cout << "Knotvector: ";
-  for (int i = 0; i < knotVector_.size(); i++)
+  for (int i = 0; i < (int)knotVector_.size(); i++)
   {
     if (i != 0)
       std::cout << ", ";

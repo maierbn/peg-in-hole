@@ -35,4 +35,4 @@ endif()
 
 add_subdirectory(resources/from_libfranka)
 add_subdirectory(source)
-add_subdirectory(documentation)
+#add_subdirectory(documentation)

@@ -23,7 +23,7 @@ private:
 
 	std::vector<CartesianPose> &poses_;   //< the provided poses that should be interpolated
 	std::vector<double> knotVector_;      //< knot vector for the spline curve
-	double p_;   													//< polynomial degree of the ansatz functions
-	double nBasisFunctions_;							//< number of poses = number of basis functions
-	double targetMultiplicity_;          //< multiplicity of the knots, degree of continuity = p - multiplicity
+	int p_;   											  		//< polynomial degree of the ansatz functions
+	int nBasisFunctions_;						     	//< number of poses = number of basis functions
+	int targetMultiplicity_;              //< multiplicity of the knots, degree of continuity = p - multiplicity
 };
